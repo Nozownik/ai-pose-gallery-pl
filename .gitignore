@@ -1,0 +1,32 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# 工具产物
+*.part
+download_failed.txt
+verify_failed.txt
+
+# 本地/编辑器
+.workbuddy/
+.idea/
+.vscode/
+node_modules/
+.wrangler/
+
+# 构建产物
+dist/
+
+# Local image mirrors (optional; gallery defaults to CDN)
+/img/**
+!/img/README.md
+/thumbs/**
+!/thumbs/README.md
