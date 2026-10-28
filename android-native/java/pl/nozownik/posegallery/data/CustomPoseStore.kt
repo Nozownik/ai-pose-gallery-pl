@@ -63,6 +63,19 @@ class CustomPoseStore(private val context: Context) {
         pose
     }
 
+    suspend fun updateCategory(id: String, category: String) = withContext(Dispatchers.IO) {
+        persist(_poses.value.map {
+            if (it.id == id) it.copy(category = category) else it
+        })
+    }
+
+    /** When a custom category is renamed, rewrite pose.category strings. */
+    suspend fun remapCategory(oldName: String, newName: String) = withContext(Dispatchers.IO) {
+        persist(_poses.value.map {
+            if (it.isCustom && it.category == oldName) it.copy(category = newName) else it
+        })
+    }
+
     suspend fun delete(id: String) = withContext(Dispatchers.IO) {
         val pose = _poses.value.find { it.id == id } ?: return@withContext
         pose.localPath?.takeIf { it.isNotBlank() }?.let { File(it).delete() }

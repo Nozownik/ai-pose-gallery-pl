@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
     <files-path name="custom_poses" path="custom_poses/" />
+    <files-path name="offline" path="offline_thumbs/" />
     <cache-path name="cache" path="." />
 </paths>

@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -107,20 +108,49 @@ fun AppRoot(vm: PoseViewModel) {
     val c = LocalPoseColors.current
     var selectedPoseId by remember { mutableStateOf<String?>(null) }
     var showAdd by remember { mutableStateOf(false) }
+    var showCompare by remember { mutableStateOf(false) }
     val snack = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
+    LaunchedEffect(state.openPoseId) {
+        state.openPoseId?.let {
+            selectedPoseId = it
+            vm.consumeOpenPose()
+        }
+    }
+
     LaunchedEffect(Unit) {
         vm.events.collect { ev ->
-            val msg = when (ev) {
-                "saved_ok" -> s.savedOk
-                "saved_fail" -> s.savedFail
-                "note_saved" -> s.noteSaved
+            val msg = when {
+                ev == "saved_ok" -> s.savedOk
+                ev == "saved_fail" -> s.savedFail
+                ev == "note_saved" -> s.noteSaved
+                ev == "image_copied" -> s.imageCopied
+                ev == "image_copy_fail" -> s.imageCopyFail
+                ev == "copied_tags" -> s.copied
+                ev == "batch_copied" -> s.batchCopied
+                ev == "export_ok" -> s.exportOk
+                ev == "export_empty" -> s.exportEmpty
+                ev == "shortcut_ok" -> s.shortcutOk
+                ev == "shortcut_fail" -> s.shortcutFail
+                ev.startsWith("cache_ok:") -> s.cacheOk.format(ev.removePrefix("cache_ok:"))
                 else -> null
             }
             if (msg != null) snack.showSnackbar(msg)
         }
+    }
+
+    if (showCompare) {
+        BackHandler { showCompare = false }
+        CompareScreen(
+            poseA = state.compareA?.let(vm::findPose),
+            poseB = state.compareB?.let(vm::findPose),
+            strings = s,
+            onBack = { showCompare = false },
+            onClear = { vm.clearCompare() }
+        )
+        return
     }
 
     if (showAdd) {
@@ -155,19 +185,20 @@ fun AppRoot(vm: PoseViewModel) {
                     onBack = { selectedPoseId = null },
                     onSelectPose = { selectedPoseId = it.id },
                     onToggleFav = { vm.toggleFavorite(pose.id) },
-                    onCopy = { text ->
-                        copyText(context, text)
-                        scope.launch { snack.showSnackbar(s.copied) }
-                    },
+                    onCopy = { vm.copyTags(pose) },
                     onCopyId = {
                         copyText(context, pose.id)
                         scope.launch { snack.showSnackbar(s.idCopied) }
                     },
                     onSaveImage = { vm.saveImage(pose) },
+                    onCopyImage = { vm.copyImage(pose) },
                     onSaveNote = { vm.setNote(pose.id, it) },
                     onDeleteCustom = {
                         vm.deleteCustom(pose.id)
                         selectedPoseId = null
+                    },
+                    onSwipeAngle = { dir ->
+                        vm.adjacentAngleId(pose, group, dir)?.let { selectedPoseId = it }
                     },
                     onSwipeGroup = { dir ->
                         val list = state.visibleGroups
@@ -175,6 +206,10 @@ fun AppRoot(vm: PoseViewModel) {
                         val next = list.getOrNull(idx + dir) ?: return@DetailScreen
                         val keep = pose.angle
                         selectedPoseId = (next.byAngle[keep] ?: next.primary).id
+                    },
+                    onAddToCompare = {
+                        vm.setCompareSlot(pose.id)
+                        showCompare = true
                     }
                 )
                 SnackbarHost(snack, Modifier.align(Alignment.BottomCenter))
@@ -296,8 +331,20 @@ fun GalleryScreen(
                     fontSize = 12.sp
                 )
             }
-            IconButton(onClick = { showFilters = !showFilters }) {
-                Icon(Icons.Default.FilterList, strings.filters, tint = if (showFilters) c.accent else c.textMuted)
+            if (state.batchMode) {
+                TextButton(onClick = { vm.copySelectedTags() }) {
+                    Text(strings.batchCopy, color = c.accent, fontSize = 12.sp)
+                }
+                TextButton(onClick = { vm.setBatchMode(false) }) {
+                    Text(strings.batchDone, color = c.textMuted, fontSize = 12.sp)
+                }
+            } else {
+                TextButton(onClick = { vm.setBatchMode(true) }) {
+                    Text(strings.batch, color = c.textMuted, fontSize = 12.sp)
+                }
+                IconButton(onClick = { showFilters = !showFilters }) {
+                    Icon(Icons.Default.FilterList, strings.filters, tint = if (showFilters) c.accent else c.textMuted)
+                }
             }
         }
 
@@ -339,7 +386,10 @@ fun GalleryScreen(
             state.systems.forEach { sys ->
                 FilterChip(
                     selected = state.filters.system == sys,
-                    onClick = { vm.setSystem(if (state.filters.system == sys) "" else sys) },
+                    onClick = {
+                        if (state.filters.system == sys) vm.scrollToTop()
+                        else vm.setSystem(sys)
+                    },
                     label = { Text(sys.substringAfterLast('·').trim().ifBlank { sys }, maxLines = 1) },
                     colors = chipColors
                 )
@@ -360,7 +410,11 @@ fun GalleryScreen(
                 state.categories.forEach { cat ->
                     FilterChip(
                         selected = state.filters.category == cat,
-                        onClick = { vm.setCategory(if (state.filters.category == cat) "" else cat) },
+                        onClick = {
+                            // Keep category selected on re-tap; only "Wszystkie" clears
+                            if (state.filters.category == cat) vm.scrollToTop()
+                            else vm.setCategory(cat)
+                        },
                         label = { Text(cat, maxLines = 1) },
                         colors = chipColors
                     )
@@ -378,7 +432,10 @@ fun GalleryScreen(
                 state.angles.forEach { a ->
                     FilterChip(
                         selected = state.filters.angle == a,
-                        onClick = { vm.setAngle(if (state.filters.angle == a) "" else a) },
+                        onClick = {
+                            if (state.filters.angle == a) vm.scrollToTop()
+                            else vm.setAngle(a)
+                        },
                         label = { Text(shortAngle(a), maxLines = 1) },
                         colors = chipColors
                     )
@@ -411,24 +468,49 @@ fun GalleryScreen(
                     }
                 }
             }
-            else -> LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                state = gridState,
-                contentPadding = PaddingValues(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-                modifier = Modifier.fillMaxSize()
-            ) {
-                items(state.visibleGroups, key = { it.key }) { group ->
-                    val display = state.filters.angle.takeIf { it.isNotEmpty() }?.let { group.byAngle[it] } ?: group.primary
-                    PoseCard(
-                        group = group,
-                        pose = display,
-                        favorited = group.items.any { it.id in state.favorites },
-                        customLabel = strings.customBadge,
-                        onClick = { onOpen(group) },
-                        onToggleFav = { vm.toggleFavorite(display.id) }
-                    )
+            else -> {
+                var catDrag by remember { mutableFloatStateOf(0f) }
+                Box(
+                    Modifier
+                        .fillMaxSize()
+                        .pointerInput(state.filters.category, state.categories) {
+                            detectHorizontalDragGestures(
+                                onDragEnd = {
+                                    when {
+                                        catDrag < -90f -> vm.shiftCategory(1)
+                                        catDrag > 90f -> vm.shiftCategory(-1)
+                                    }
+                                    catDrag = 0f
+                                },
+                                onHorizontalDrag = { _, dx -> catDrag += dx }
+                            )
+                        }
+                ) {
+                    LazyVerticalGrid(
+                        columns = GridCells.Adaptive(minSize = 220.dp),
+                        state = gridState,
+                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 10.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        items(state.visibleGroups, key = { it.key }) { group ->
+                            val display = state.filters.angle.takeIf { it.isNotEmpty() }?.let { group.byAngle[it] } ?: group.primary
+                            PoseCard(
+                                group = group,
+                                pose = display,
+                                favorited = group.items.any { it.id in state.favorites },
+                                customLabel = strings.customBadge,
+                                selected = state.batchMode && display.id in state.selectedIds,
+                                thumbUrl = vm.resolveThumb(display),
+                                onClick = {
+                                    if (state.batchMode) vm.toggleSelect(display.id)
+                                    else onOpen(group)
+                                },
+                                onToggleFav = { vm.toggleFavorite(display.id) }
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -441,6 +523,8 @@ fun PoseCard(
     pose: Pose,
     favorited: Boolean,
     customLabel: String,
+    selected: Boolean = false,
+    thumbUrl: String? = null,
     onClick: () -> Unit,
     onToggleFav: () -> Unit
 ) {
@@ -449,19 +533,20 @@ fun PoseCard(
         Modifier
             .clip(RoundedCornerShape(14.dp))
             .background(c.surface)
+            .then(if (selected) Modifier.border(2.dp, c.accent, RoundedCornerShape(14.dp)) else Modifier)
             .clickable(onClick = onClick)
     ) {
         Box {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(pose.thumbUrl())
+                    .data(thumbUrl ?: pose.thumbUrl())
                     .crossfade(true)
                     .build(),
                 contentDescription = group.name,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(3f / 4f)
+                    .aspectRatio(0.72f)
                     .background(c.surface2)
             )
             Text(
@@ -495,11 +580,11 @@ fun PoseCard(
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
                 color = c.textMain,
-                fontSize = 12.sp,
+                fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold,
-                lineHeight = 16.sp
+                lineHeight = 18.sp
             )
-            Text(group.category, color = c.accent, fontSize = 11.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Text(group.category, color = c.accent, fontSize = 12.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
     }
 }
@@ -515,12 +600,15 @@ fun DetailScreen(
     onBack: () -> Unit,
     onSelectPose: (Pose) -> Unit,
     onToggleFav: () -> Unit,
-    onCopy: (String) -> Unit,
+    onCopy: () -> Unit,
     onCopyId: () -> Unit,
     onSaveImage: () -> Unit,
+    onCopyImage: () -> Unit,
     onSaveNote: (String) -> Unit,
     onDeleteCustom: () -> Unit,
-    onSwipeGroup: (Int) -> Unit
+    onSwipeAngle: (Int) -> Unit,
+    onSwipeGroup: (Int) -> Unit,
+    onAddToCompare: () -> Unit
 ) {
     val c = LocalPoseColors.current
     val context = LocalContext.current
@@ -562,14 +650,16 @@ fun DetailScreen(
         Box(
             Modifier
                 .fillMaxWidth()
-                .weight(1f)
+                .weight(1.35f)
                 .background(c.surface)
                 .pointerInput(pose.id) {
                     detectHorizontalDragGestures(
                         onDragEnd = {
                             when {
-                                dragAcc < -80f -> onSwipeGroup(1)
-                                dragAcc > 80f -> onSwipeGroup(-1)
+                                dragAcc < -140f -> onSwipeGroup(1)
+                                dragAcc > 140f -> onSwipeGroup(-1)
+                                dragAcc < -50f -> onSwipeAngle(1)
+                                dragAcc > 50f -> onSwipeAngle(-1)
                             }
                             dragAcc = 0f
                         },
@@ -585,16 +675,17 @@ fun DetailScreen(
                     .build(),
                 contentDescription = pose.poseName,
                 contentScale = ContentScale.Fit,
-                modifier = Modifier.fillMaxSize().padding(8.dp)
+                modifier = Modifier.fillMaxSize().padding(4.dp)
             )
         }
 
         Column(
             Modifier
                 .fillMaxWidth()
+                .heightIn(max = 320.dp)
                 .background(c.surface)
                 .verticalScroll(rememberScrollState())
-                .padding(16.dp)
+                .padding(horizontal = 16.dp, vertical = 10.dp)
         ) {
             if (group.items.size > 1) {
                 Text(strings.angle, color = c.textMuted, fontSize = 11.sp, fontWeight = FontWeight.Bold)
@@ -638,39 +729,57 @@ fun DetailScreen(
             Spacer(Modifier.height(14.dp))
 
             Button(
-                onClick = { onCopy(pose.promptTags()) },
+                onClick = onCopy,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(52.dp),
+                    .height(48.dp),
                 shape = RoundedCornerShape(14.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = c.accent, contentColor = Color.White)
             ) {
                 Icon(Icons.Default.ContentCopy, null)
                 Spacer(Modifier.size(8.dp))
-                Text(strings.copy, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                Text(strings.copy, fontWeight = FontWeight.Bold, fontSize = 15.sp)
             }
             Text(
                 strings.copyIdLongPress,
                 color = c.accent,
                 fontSize = 11.sp,
                 modifier = Modifier
-                    .padding(top = 6.dp)
+                    .padding(top = 4.dp)
                     .combinedClickable(onClick = {}, onLongClick = onCopyId)
             )
             Text(pose.promptTags(), color = c.textMuted, fontSize = 11.sp, modifier = Modifier.padding(top = 4.dp))
 
-            Spacer(Modifier.height(10.dp))
+            Spacer(Modifier.height(8.dp))
+            OutlinedButton(
+                onClick = onCopyImage,
+                modifier = Modifier.fillMaxWidth().height(46.dp),
+                shape = RoundedCornerShape(14.dp)
+            ) {
+                Icon(Icons.Default.ContentCopy, null, tint = c.accent)
+                Spacer(Modifier.size(8.dp))
+                Text(strings.copyImage, color = c.accent, fontWeight = FontWeight.SemiBold)
+            }
+            Spacer(Modifier.height(6.dp))
             OutlinedButton(
                 onClick = onSaveImage,
-                modifier = Modifier.fillMaxWidth().height(48.dp),
+                modifier = Modifier.fillMaxWidth().height(46.dp),
                 shape = RoundedCornerShape(14.dp)
             ) {
                 Icon(Icons.Default.Download, null, tint = c.accent)
                 Spacer(Modifier.size(8.dp))
                 Text(strings.saveImage, color = c.accent, fontWeight = FontWeight.SemiBold)
             }
+            Spacer(Modifier.height(6.dp))
+            OutlinedButton(
+                onClick = onAddToCompare,
+                modifier = Modifier.fillMaxWidth().height(46.dp),
+                shape = RoundedCornerShape(14.dp)
+            ) {
+                Text(strings.selectForCompare, color = c.accent, fontWeight = FontWeight.SemiBold)
+            }
 
-            Spacer(Modifier.height(18.dp))
+            Spacer(Modifier.height(14.dp))
             Text(strings.annotation, color = c.textMain, fontWeight = FontWeight.Bold, fontSize = 14.sp)
             Spacer(Modifier.height(6.dp))
             OutlinedTextField(
@@ -679,21 +788,13 @@ fun DetailScreen(
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = { Text(strings.annotationHint) },
                 minLines = 2,
-                maxLines = 5,
+                maxLines = 4,
                 shape = RoundedCornerShape(12.dp),
                 colors = fieldColors(c)
             )
             TextButton(onClick = { onSaveNote(noteText) }) {
                 Text(strings.saveNote, color = c.accent)
             }
-
-            Spacer(Modifier.height(12.dp))
-            Text(strings.stylePrompts, color = c.textMain, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-            Text(strings.styleHint, color = c.textMuted, fontSize = 11.sp)
-            Spacer(Modifier.height(8.dp))
-            PromptCard(strings.nanoBanana, StylePrompts.nanoBanana(pose), strings.copyPrompt, c) { onCopy(it) }
-            PromptCard(strings.chatGpt, StylePrompts.chatGpt(pose), strings.copyPrompt, c) { onCopy(it) }
-            PromptCard(strings.grokImagine, StylePrompts.grokImagine(pose), strings.copyPrompt, c) { onCopy(it) }
 
             if (pose.isCustom) {
                 Spacer(Modifier.height(12.dp))
@@ -812,6 +913,12 @@ fun SettingsScreen(
                     if (row.size == 1) Spacer(Modifier.weight(1f))
                 }
             }
+            Spacer(Modifier.height(24.dp))
+            CustomCategoriesPanel(state, vm, strings)
+            Spacer(Modifier.height(24.dp))
+            ClipboardHistoryPanel(state, vm, strings)
+            Spacer(Modifier.height(24.dp))
+            ToolsPanel(state, vm, strings)
         } else {
             Text(strings.linksHint, color = c.textMuted, fontSize = 12.sp)
             Spacer(Modifier.height(12.dp))
@@ -919,7 +1026,7 @@ fun AddCustomScreen(
                 shape = RoundedCornerShape(12.dp)
             )
             Spacer(Modifier.height(8.dp))
-            ChipPicker(strings.category, categories, category, c) { category = it }
+            ChipPicker(strings.category, categories.distinct(), category, c) { category = it }
             ChipPicker(strings.system, (listOf("Custom") + systems).distinct(), system, c) { system = it }
             ChipPicker(strings.angle, angles, angle, c) { angle = it }
             Spacer(Modifier.height(8.dp))
@@ -931,6 +1038,31 @@ fun AddCustomScreen(
                 colors = fieldColors(c),
                 shape = RoundedCornerShape(12.dp)
             )
+
+            Spacer(Modifier.height(18.dp))
+            Text(strings.stylePrompts, color = c.textMain, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+            Text(strings.styleHint, color = c.textMuted, fontSize = 11.sp)
+            Spacer(Modifier.height(8.dp))
+            val ctx = LocalContext.current
+            PromptCard(
+                strings.nanoBanana,
+                StylePrompts.nanoBanana(poseName, angle, category, system),
+                strings.copyPrompt,
+                c
+            ) { copyText(ctx, it) }
+            PromptCard(
+                strings.chatGpt,
+                StylePrompts.chatGpt(poseName, angle, category, system),
+                strings.copyPrompt,
+                c
+            ) { copyText(ctx, it) }
+            PromptCard(
+                strings.grokImagine,
+                StylePrompts.grokImagine(poseName, angle, category, system),
+                strings.copyPrompt,
+                c
+            ) { copyText(ctx, it) }
+
             Spacer(Modifier.height(20.dp))
             Button(
                 onClick = {
