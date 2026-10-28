@@ -16,7 +16,7 @@ class PoseRepository(private val context: Context) {
     private val _favorites = MutableStateFlow(loadFavIds())
     val favorites: StateFlow<Set<String>> = _favorites.asStateFlow()
 
-    suspend fun loadPoses(): List<Pose> = withContext(Dispatchers.IO) {
+    suspend fun loadAssetPoses(): List<Pose> = withContext(Dispatchers.IO) {
         context.assets.open("data/pose-en.json").bufferedReader().use { reader ->
             val type = object : TypeToken<List<Pose>>() {}.type
             gson.fromJson(reader, type)
@@ -26,7 +26,8 @@ class PoseRepository(private val context: Context) {
     fun buildGroups(poses: List<Pose>): List<PoseGroup> {
         val order = linkedMapOf<String, MutableList<Pose>>()
         poses.forEach { pose ->
-            val key = "${pose.system}|${pose.poseNumber.ifBlank { pose.id }}"
+            val key = if (pose.isCustom) "custom|${pose.id}"
+            else "${pose.system}|${pose.poseNumber.ifBlank { pose.id }}"
             order.getOrPut(key) { mutableListOf() }.add(pose)
         }
         return order.map { (key, items) ->
@@ -38,7 +39,8 @@ class PoseRepository(private val context: Context) {
                 name = first.poseName,
                 category = first.category,
                 items = items,
-                byAngle = items.associateBy { it.angle }
+                byAngle = items.associateBy { it.angle },
+                isCustom = first.isCustom
             )
         }
     }

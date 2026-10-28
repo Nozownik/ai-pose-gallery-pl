@@ -9,12 +9,20 @@ data class Pose(
     val angle: String,
     val thumb: String,
     val full: String,
-    val search: String = ""
+    val search: String? = "",
+    val isCustom: Boolean = false,
+    val localPath: String? = null
 ) {
-    fun thumbUrl(cdn: String = CDN): String = cdn + thumb.removePrefix("./")
-    fun fullUrl(cdn: String = CDN): String = cdn + full.removePrefix("./")
+    private val resolvedLocal: String get() = localPath.orEmpty()
 
-    /** English prompt tags: pose name + angle + category */
+    fun thumbUrl(cdn: String = CDN): String =
+        if (isCustom && resolvedLocal.isNotBlank()) resolvedLocal
+        else cdn + thumb.removePrefix("./")
+
+    fun fullUrl(cdn: String = CDN): String =
+        if (isCustom && resolvedLocal.isNotBlank()) resolvedLocal
+        else cdn + full.removePrefix("./")
+
     fun promptTags(): String = listOf(poseName, angle, category, system)
         .filter { it.isNotBlank() }
         .joinToString(", ")
@@ -31,7 +39,8 @@ data class PoseGroup(
     val name: String,
     val category: String,
     val items: List<Pose>,
-    val byAngle: Map<String, Pose>
+    val byAngle: Map<String, Pose>,
+    val isCustom: Boolean = false
 ) {
     val primary: Pose get() = items.first()
 }
