@@ -49,6 +49,7 @@ import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.Search
@@ -76,6 +77,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -94,6 +96,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import kotlinx.coroutines.launch
+import pl.nozownik.posegallery.BuildConfig
 import pl.nozownik.posegallery.data.AppLanguage
 import pl.nozownik.posegallery.data.AppThemeId
 import pl.nozownik.posegallery.data.FreePoseLinks
@@ -842,7 +845,7 @@ fun SettingsScreen(
 ) {
     val c = LocalPoseColors.current
     val context = LocalContext.current
-    var linksTab by remember { mutableStateOf(false) }
+    var settingsTab by remember { mutableIntStateOf(0) } // 0 settings, 1 links, 2 about
     val chipColors = FilterChipDefaults.filterChipColors(
         containerColor = c.surface2,
         labelColor = c.textMuted,
@@ -861,95 +864,162 @@ fun SettingsScreen(
         Text(strings.settings, fontWeight = FontWeight.Bold, fontSize = 22.sp, color = c.textMain)
         Spacer(Modifier.height(16.dp))
 
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            FilterChip(selected = !linksTab, onClick = { linksTab = false }, label = { Text(strings.settings) }, colors = chipColors)
-            FilterChip(selected = linksTab, onClick = { linksTab = true }, label = { Text(strings.links) }, colors = chipColors)
+        Row(
+            Modifier.horizontalScroll(rememberScrollState()),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            FilterChip(selected = settingsTab == 0, onClick = { settingsTab = 0 }, label = { Text(strings.settings) }, colors = chipColors)
+            FilterChip(selected = settingsTab == 1, onClick = { settingsTab = 1 }, label = { Text(strings.links) }, colors = chipColors)
+            FilterChip(selected = settingsTab == 2, onClick = { settingsTab = 2 }, label = { Text(strings.about) }, colors = chipColors)
         }
 
         Spacer(Modifier.height(16.dp))
 
-        if (!linksTab) {
-            Text(strings.language, color = c.textMuted, fontSize = 12.sp, fontWeight = FontWeight.Bold)
-            Spacer(Modifier.height(8.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                FilterChip(
-                    selected = state.settings.language == AppLanguage.PL,
-                    onClick = { vm.setLanguage(AppLanguage.PL) },
-                    label = { Text("Polski") },
-                    colors = chipColors
-                )
-                FilterChip(
-                    selected = state.settings.language == AppLanguage.EN,
-                    onClick = { vm.setLanguage(AppLanguage.EN) },
-                    label = { Text("English") },
-                    colors = chipColors
-                )
-            }
-
-            Spacer(Modifier.height(20.dp))
-            Text(strings.theme, color = c.textMuted, fontSize = 12.sp, fontWeight = FontWeight.Bold)
-            Spacer(Modifier.height(8.dp))
-            val themes = listOf(
-                AppThemeId.DARK to strings.themeDark,
-                AppThemeId.AMOLED to strings.themeAmoled,
-                AppThemeId.LIGHT to strings.themeLight,
-                AppThemeId.PURPLE to strings.themePurple,
-                AppThemeId.CYAN to strings.themeCyan
-            )
-            themes.chunked(2).forEach { row ->
-                Row(
-                    Modifier.fillMaxWidth().padding(vertical = 4.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    row.forEach { (id, label) ->
-                        FilterChip(
-                            selected = state.settings.theme == id,
-                            onClick = { vm.setTheme(id) },
-                            label = { Text(label) },
-                            colors = chipColors,
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-                    if (row.size == 1) Spacer(Modifier.weight(1f))
-                }
-            }
-            Spacer(Modifier.height(24.dp))
-            CustomCategoriesPanel(state, vm, strings)
-            Spacer(Modifier.height(24.dp))
-            ClipboardHistoryPanel(state, vm, strings)
-            Spacer(Modifier.height(24.dp))
-            ToolsPanel(state, vm, strings)
-        } else {
-            Text(strings.linksHint, color = c.textMuted, fontSize = 12.sp)
-            Spacer(Modifier.height(12.dp))
-            FreePoseLinks.all.forEach { link ->
-                Column(
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 6.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(c.surface)
-                        .border(1.dp, c.line, RoundedCornerShape(12.dp))
-                        .clickable {
-                            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(link.url)))
-                        }
-                        .padding(14.dp)
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Default.Link, null, tint = c.accent, modifier = Modifier.size(18.dp))
-                        Spacer(Modifier.size(8.dp))
-                        Text(link.title, color = c.textMain, fontWeight = FontWeight.SemiBold)
-                    }
-                    Text(
-                        if (state.settings.language == AppLanguage.PL) link.notePl else link.noteEn,
-                        color = c.textMuted,
-                        fontSize = 12.sp,
-                        modifier = Modifier.padding(top = 4.dp)
+        when (settingsTab) {
+            0 -> {
+                Text(strings.language, color = c.textMuted, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                Spacer(Modifier.height(8.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    FilterChip(
+                        selected = state.settings.language == AppLanguage.PL,
+                        onClick = { vm.setLanguage(AppLanguage.PL) },
+                        label = { Text("Polski") },
+                        colors = chipColors
+                    )
+                    FilterChip(
+                        selected = state.settings.language == AppLanguage.EN,
+                        onClick = { vm.setLanguage(AppLanguage.EN) },
+                        label = { Text("English") },
+                        colors = chipColors
                     )
                 }
+
+                Spacer(Modifier.height(20.dp))
+                Text(strings.theme, color = c.textMuted, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                Spacer(Modifier.height(8.dp))
+                val themes = listOf(
+                    AppThemeId.DARK to strings.themeDark,
+                    AppThemeId.AMOLED to strings.themeAmoled,
+                    AppThemeId.LIGHT to strings.themeLight,
+                    AppThemeId.PURPLE to strings.themePurple,
+                    AppThemeId.CYAN to strings.themeCyan
+                )
+                themes.chunked(2).forEach { row ->
+                    Row(
+                        Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        row.forEach { (id, label) ->
+                            FilterChip(
+                                selected = state.settings.theme == id,
+                                onClick = { vm.setTheme(id) },
+                                label = { Text(label) },
+                                colors = chipColors,
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                        if (row.size == 1) Spacer(Modifier.weight(1f))
+                    }
+                }
+                Spacer(Modifier.height(24.dp))
+                CustomCategoriesPanel(state, vm, strings)
+                Spacer(Modifier.height(24.dp))
+                ClipboardHistoryPanel(state, vm, strings)
+                Spacer(Modifier.height(24.dp))
+                ToolsPanel(state, vm, strings)
+            }
+            1 -> {
+                Text(strings.linksHint, color = c.textMuted, fontSize = 12.sp)
+                Spacer(Modifier.height(12.dp))
+                FreePoseLinks.all.forEach { link ->
+                    Column(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 6.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(c.surface)
+                            .border(1.dp, c.line, RoundedCornerShape(12.dp))
+                            .clickable {
+                                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(link.url)))
+                            }
+                            .padding(14.dp)
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Default.Link, null, tint = c.accent, modifier = Modifier.size(18.dp))
+                            Spacer(Modifier.size(8.dp))
+                            Text(link.title, color = c.textMain, fontWeight = FontWeight.SemiBold)
+                        }
+                        Text(
+                            if (state.settings.language == AppLanguage.PL) link.notePl else link.noteEn,
+                            color = c.textMuted,
+                            fontSize = 12.sp,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    }
+                }
+            }
+            else -> {
+                AboutPanel(strings = strings)
             }
         }
         Spacer(Modifier.height(40.dp))
+    }
+}
+
+@Composable
+private fun AboutPanel(strings: S) {
+    val c = LocalPoseColors.current
+    val context = LocalContext.current
+    val versionLabel = "${strings.aboutVersion} ${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"
+
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .background(c.surface)
+            .border(1.dp, c.line, RoundedCornerShape(12.dp))
+            .padding(14.dp)
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(Icons.Default.Info, null, tint = c.accent, modifier = Modifier.size(20.dp))
+            Spacer(Modifier.size(8.dp))
+            Text(strings.appTitle, color = c.textMain, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+        }
+        Text(versionLabel, color = c.textMuted, fontSize = 13.sp, modifier = Modifier.padding(top = 6.dp))
+        Text(strings.aboutApkAuthor, color = c.textMain, fontSize = 13.sp, modifier = Modifier.padding(top = 10.dp))
+        Text(strings.aboutImages, color = c.textMuted, fontSize = 12.sp, modifier = Modifier.padding(top = 4.dp))
+        Text(strings.aboutLicense, color = c.textMuted, fontSize = 12.sp, modifier = Modifier.padding(top = 4.dp))
+    }
+
+    Spacer(Modifier.height(12.dp))
+
+    data class AboutLink(val title: String, val url: String)
+    val links = listOf(
+        AboutLink(strings.aboutRepo, "https://github.com/Nozownik/ai-pose-gallery-pl"),
+        AboutLink(strings.aboutOriginal, "https://github.com/anhao/ai-pose-gallery-zh"),
+        AboutLink(strings.aboutCdn, "https://ai-pose-gallery.pages.dev/"),
+        AboutLink(strings.aboutImages, "https://x.com/giaaibusi")
+    )
+    links.forEach { link ->
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 6.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .background(c.surface)
+                .border(1.dp, c.line, RoundedCornerShape(12.dp))
+                .clickable {
+                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(link.url)))
+                }
+                .padding(14.dp)
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(Icons.Default.Link, null, tint = c.accent, modifier = Modifier.size(18.dp))
+                Spacer(Modifier.size(8.dp))
+                Text(link.title, color = c.textMain, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
+            }
+            Text(link.url, color = c.textMuted, fontSize = 11.sp, modifier = Modifier.padding(top = 4.dp))
+        }
     }
 }
 

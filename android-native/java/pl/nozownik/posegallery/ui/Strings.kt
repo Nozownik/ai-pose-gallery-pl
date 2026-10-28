@@ -91,7 +91,15 @@ data class S(
     val cacheOk: String,
     val offlineCached: String,
     val selectForCompare: String,
-    val tools: String
+    val tools: String,
+    val about: String,
+    val aboutVersion: String,
+    val aboutApkAuthor: String,
+    val aboutRepo: String,
+    val aboutOriginal: String,
+    val aboutCdn: String,
+    val aboutImages: String,
+    val aboutLicense: String
 )
 
 fun strings(lang: AppLanguage): S = when (lang) {
@@ -184,7 +192,15 @@ fun strings(lang: AppLanguage): S = when (lang) {
         cacheOk = "Zapisano thumbs: %s",
         offlineCached = "Offline thumbs: %d",
         selectForCompare = "Do porównania",
-        tools = "Narzędzia"
+        tools = "Narzędzia",
+        about = "O aplikacji",
+        aboutVersion = "Wersja",
+        aboutApkAuthor = "APK / fork PL: Nozownik",
+        aboutRepo = "Repozytorium APK (GitHub)",
+        aboutOriginal = "Oryginał galerii (fork ZH): anhao",
+        aboutCdn = "Źródło poz (CDN)",
+        aboutImages = "Obrazy / dane: ギア (@giaaibusi)",
+        aboutLicense = "Kod: MIT · obrazy poza MIT (prawa autora)"
     )
     AppLanguage.EN -> S(
         appTitle = "AI Pose Gallery",
@@ -275,6 +291,14 @@ fun strings(lang: AppLanguage): S = when (lang) {
         cacheOk = "Cached thumbs: %s",
         offlineCached = "Offline thumbs: %d",
         selectForCompare = "For compare",
-        tools = "Tools"
+        tools = "Tools",
+        about = "About",
+        aboutVersion = "Version",
+        aboutApkAuthor = "APK / PL fork: Nozownik",
+        aboutRepo = "APK repository (GitHub)",
+        aboutOriginal = "Original gallery (ZH fork): anhao",
+        aboutCdn = "Pose source (CDN)",
+        aboutImages = "Images / data: ギア (@giaaibusi)",
+        aboutLicense = "Code: MIT · images not under MIT (author rights)"
     )
 }

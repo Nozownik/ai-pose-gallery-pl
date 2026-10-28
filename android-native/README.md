@@ -3,10 +3,12 @@
 Package: `pl.nozownik.posegallery`  
 Buildable project: sibling `ai-pose-gallery-pl-app`
 
-## v2.2.0 (source; APK when user says buduj)
+## v2.2.1
+About / O aplikacji in Settings: version (BuildConfig), APK repo link, ZH fork credit (anhao), pose CDN, image author (@giaaibusi), MIT note. Links open in browser.
+
+## v2.2.0
 Keeps 2.1.1: larger thumbs, copy image bitmap, style prompts only on custom create, category re-tap keeps filter.
 
-New:
 1. Swipe gallery L/R → adjacent category
 2. Custom categories CRUD + chip row
 3. Clipboard history (tags/images) re-copy
@@ -19,4 +21,4 @@ New:
 
 Skipped: #9 seed/LoRA
 
-versionName 2.2.0 / versionCode 5
+versionName 2.2.1 / versionCode 6
