@@ -13,17 +13,23 @@ import java.io.File
 import java.io.FileInputStream
 
 object ImageSaver {
-    suspend fun savePoseImage(context: Context, source: String, displayName: String): Boolean =
+    suspend fun savePoseImage(
+        context: Context,
+        source: String,
+        displayName: String,
+        mimeType: String = "image/jpeg",
+        extension: String = "jpg"
+    ): Boolean =
         withContext(Dispatchers.IO) {
             runCatching {
                 val bytes = when {
                     source.startsWith("http://") || source.startsWith("https://") -> download(source)
                     else -> FileInputStream(File(source)).use { it.readBytes() }
                 }
-                val name = displayName.replace(Regex("[^a-zA-Z0-9._-]"), "_") + ".jpg"
+                val name = displayName.replace(Regex("[^a-zA-Z0-9._-]"), "_") + "." + extension
                 val values = ContentValues().apply {
                     put(MediaStore.Images.Media.DISPLAY_NAME, name)
-                    put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+                    put(MediaStore.Images.Media.MIME_TYPE, mimeType)
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                         put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/GaleriaPozAI")
                         put(MediaStore.Images.Media.IS_PENDING, 1)

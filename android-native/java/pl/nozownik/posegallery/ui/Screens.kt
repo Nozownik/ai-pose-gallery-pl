@@ -42,6 +42,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Checkroom
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Delete
@@ -95,6 +96,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import pl.nozownik.posegallery.BuildConfig
 import pl.nozownik.posegallery.data.AppLanguage
@@ -115,6 +117,24 @@ fun AppRoot(vm: PoseViewModel) {
     val snack = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
+    val costumeVm: CostumeViewModel = viewModel()
+    val costumeState by costumeVm.uiState.collectAsState()
+    val cs = costumeStrings(state.settings.language)
+    var selectedCostumeId by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(Unit) {
+        costumeVm.events.collect { ev ->
+            val msg = when (ev) {
+                "saved_ok" -> s.savedOk
+                "saved_fail" -> s.savedFail
+                "image_copied" -> s.imageCopied
+                "image_copy_fail" -> s.imageCopyFail
+                "copied_tags" -> s.copied
+                else -> null
+            }
+            if (msg != null) snack.showSnackbar(msg)
+        }
+    }
 
     LaunchedEffect(state.openPoseId) {
         state.openPoseId?.let {
@@ -171,6 +191,25 @@ fun AppRoot(vm: PoseViewModel) {
             }
         )
         return
+    }
+
+    if (selectedCostumeId != null) {
+        val item = costumeVm.find(selectedCostumeId!!)
+        if (item != null) {
+            BackHandler { selectedCostumeId = null }
+            Box(Modifier.fillMaxSize()) {
+                CostumeDetailScreen(
+                    item = item,
+                    isFavorite = item.id in costumeState.favorites,
+                    cs = cs,
+                    vm = costumeVm,
+                    onBack = { selectedCostumeId = null },
+                    onSwipe = { dir -> costumeVm.adjacent(item.id, dir)?.let { selectedCostumeId = it } }
+                )
+                SnackbarHost(snack, Modifier.align(Alignment.BottomCenter))
+            }
+            return
+        }
     }
 
     if (selectedPoseId != null) {
@@ -263,6 +302,13 @@ fun AppRoot(vm: PoseViewModel) {
                     colors = colors
                 )
                 NavigationBarItem(
+                    selected = state.filters.tab == 3,
+                    onClick = { if (state.filters.tab == 3) costumeVm.setCategory(costumeState.category) else vm.setTab(3) },
+                    icon = { Icon(Icons.Default.Checkroom, null) },
+                    label = { Text(cs.tab) },
+                    colors = colors
+                )
+                NavigationBarItem(
                     selected = state.filters.tab == 2,
                     onClick = { vm.setTab(2) },
                     icon = { Icon(Icons.Default.Settings, null) },
@@ -274,6 +320,13 @@ fun AppRoot(vm: PoseViewModel) {
     ) { pad ->
         when (state.filters.tab) {
             2 -> SettingsScreen(state = state, vm = vm, strings = s, contentPadding = pad)
+            3 -> CostumeGalleryScreen(
+                state = costumeState,
+                vm = costumeVm,
+                cs = cs,
+                contentPadding = pad,
+                onOpen = { selectedCostumeId = it.id }
+            )
             else -> GalleryScreen(
                 state = state,
                 vm = vm,
@@ -989,6 +1042,8 @@ private fun AboutPanel(strings: S) {
         Text(strings.aboutApkAuthor, color = c.textMain, fontSize = 13.sp, modifier = Modifier.padding(top = 10.dp))
         Text(strings.aboutImages, color = c.textMuted, fontSize = 12.sp, modifier = Modifier.padding(top = 4.dp))
         Text(strings.aboutLicense, color = c.textMuted, fontSize = 12.sp, modifier = Modifier.padding(top = 4.dp))
+        Text(strings.aboutCostumes, color = c.textMain, fontSize = 13.sp, modifier = Modifier.padding(top = 10.dp))
+        Text(strings.aboutCostumesNote, color = c.textMuted, fontSize = 12.sp, modifier = Modifier.padding(top = 4.dp))
     }
 
     Spacer(Modifier.height(12.dp))
@@ -998,7 +1053,8 @@ private fun AboutPanel(strings: S) {
         AboutLink(strings.aboutRepo, "https://github.com/Nozownik/ai-pose-gallery-pl"),
         AboutLink(strings.aboutOriginal, "https://github.com/anhao/ai-pose-gallery-zh"),
         AboutLink(strings.aboutCdn, "https://ai-pose-gallery.pages.dev/"),
-        AboutLink(strings.aboutImages, "https://x.com/giaaibusi")
+        AboutLink(strings.aboutImages, "https://x.com/giaaibusi"),
+        AboutLink(strings.aboutCostumes, "https://ai-costume-gallery.pages.dev/")
     )
     links.forEach { link ->
         Column(
