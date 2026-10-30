@@ -30,3 +30,7 @@ dist/
 !/img/README.md
 /thumbs/**
 !/thumbs/README.md
+
+# Custom outfit images are kept local only (bundled in APK builds, not published)
+android-native/assets/custom/img/
+android-native/assets/custom/thumbs/
