@@ -121,6 +121,7 @@ fun AppRoot(vm: PoseViewModel) {
     val costumeState by costumeVm.uiState.collectAsState()
     val cs = costumeStrings(state.settings.language)
     var selectedCostumeId by remember { mutableStateOf<String?>(null) }
+    var showAddOutfit by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         costumeVm.events.collect { ev ->
@@ -130,6 +131,10 @@ fun AppRoot(vm: PoseViewModel) {
                 "image_copied" -> s.imageCopied
                 "image_copy_fail" -> s.imageCopyFail
                 "copied_tags" -> s.copied
+                "outfit_added" -> cs.added
+                "outfit_add_fail" -> cs.addFail
+                "outfit_updated" -> cs.updated
+                "outfit_deleted" -> cs.deleted
                 else -> null
             }
             if (msg != null) snack.showSnackbar(msg)
@@ -190,6 +195,26 @@ fun AppRoot(vm: PoseViewModel) {
                 if (pose != null) selectedPoseId = pose.id
             }
         )
+        return
+    }
+
+    if (showAddOutfit) {
+        BackHandler { showAddOutfit = false }
+        Box(Modifier.fillMaxSize()) {
+            AddOutfitScreen(
+                cs = cs,
+                vm = costumeVm,
+                onBack = { showAddOutfit = false },
+                onSaved = { id ->
+                    if (id != null) {
+                        showAddOutfit = false
+                        costumeVm.setCategory(pl.nozownik.posegallery.data.Costume.MINE)
+                        selectedCostumeId = id
+                    }
+                }
+            )
+            SnackbarHost(snack, Modifier.align(Alignment.BottomCenter))
+        }
         return
     }
 
@@ -272,6 +297,14 @@ fun AppRoot(vm: PoseViewModel) {
                 ) {
                     Icon(Icons.Default.Add, s.addPose)
                 }
+            } else if (state.filters.tab == 3) {
+                androidx.compose.material3.ExtendedFloatingActionButton(
+                    onClick = { showAddOutfit = true },
+                    containerColor = c.accent,
+                    contentColor = Color.White,
+                    icon = { Icon(Icons.Default.Add, null) },
+                    text = { Text(cs.addOutfit, fontWeight = FontWeight.Bold) }
+                )
             }
         },
         bottomBar = {

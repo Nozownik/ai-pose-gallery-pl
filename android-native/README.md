@@ -3,6 +3,11 @@
 Package: `pl.nozownik.posegallery`  
 Buildable project: sibling `ai-pose-gallery-pl-app`
 
+## v2.4.1
+
+- **Ubrania → „Dodaj swój ciuch” (+)**: dodaj własny strój ze zdjęcia z telefonu (systemowy wybór zdjęć, bez nowych uprawnień), z nazwą i opcjonalnym opisem/słowami kluczowymi. Zapisywany tylko lokalnie w pamięci aplikacji, kategoria **Moje** (z licznikiem), wyszukiwanie, ulubione, edycja i usuwanie.
+- Karty **Prompty stroju** (Nano Banana, ChatGPT, Grok Imagine, Strój + poza) pokazują się tylko przy dodawaniu własnego stroju i na jego ekranie — zniknęły z ekranów strojów Custom i COSTUME-DB-01 (prompty generowania zostają w `custom.json`).
+
 ## v2.4.0
 Ubrania: new first category **Custom** — 50 own AI-generated garment-only images (ghost mannequin / flat lay, no people), sexy/club/lingerie/costume theme, bundled offline in the APK (img 768×1152 webp + 300×450 thumbs). Only `assets/custom/custom.json` (PL/EN names, keywords, English generation prompt) is published here; the images are kept local (gitignored) and bundled at build time. Detail shows the generation prompt plus the usual prompt variants; save writes the WEBP; "open source site" hidden for Custom. Search matches PL/EN names and keywords. Favourites work as for other outfits.
 
@@ -30,4 +35,4 @@ Keeps 2.1.1: larger thumbs, copy image bitmap, style prompts only on custom crea
 
 Skipped: #9 seed/LoRA
 
-versionName 2.4.0 / versionCode 8
+versionName 2.4.1 / versionCode 9

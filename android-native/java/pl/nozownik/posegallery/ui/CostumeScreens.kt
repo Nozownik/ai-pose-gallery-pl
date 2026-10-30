@@ -34,6 +34,14 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.AddPhotoAlternate
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.AlertDialog
+import androidx.compose.runtime.mutableStateOf
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Favorite
@@ -104,6 +112,28 @@ data class CS(
     val genPrompt: String,
     val customTerms: String,
     val offlineBadge: String,
+    val addOutfit: String,
+    val addOutfitTitle: String,
+    val pickImage: String,
+    val pickImageHint: String,
+    val outfitName: String,
+    val outfitDesc: String,
+    val outfitDescHint: String,
+    val saveOutfit: String,
+    val saving: String,
+    val needImage: String,
+    val mineTerms: String,
+    val noMine: String,
+    val edit: String,
+    val delete: String,
+    val deleteConfirm: String,
+    val cancel: String,
+    val save: String,
+    val saveMine: String,
+    val added: String,
+    val addFail: String,
+    val updated: String,
+    val deleted: String,
     val cats: Map<String, String>,
     val isPl: Boolean
 )
@@ -136,8 +166,30 @@ fun costumeStrings(lang: AppLanguage): CS = if (lang == AppLanguage.EN) CS(
     genPrompt = "Generation prompt (EN)",
     customTerms = "Custom: own AI-generated garment images (no people) made for Galeria poz AI. Bundled offline in the app.",
     offlineBadge = "OFFLINE",
+    addOutfit = "Add your outfit",
+    addOutfitTitle = "Add your outfit",
+    pickImage = "Tap to pick an outfit photo",
+    pickImageHint = "System photo picker - the app gets only the photo you choose (no extra permissions).",
+    outfitName = "Outfit name",
+    outfitDesc = "Keywords / short description (EN works best)",
+    outfitDescHint = "e.g. black satin slip dress, lace trim, strappy heels",
+    saveOutfit = "Save outfit",
+    saving = "Saving…",
+    needImage = "Pick a photo first",
+    mineTerms = "Your own outfit - saved only on this phone (app storage). Attach this photo as the reference image in the AI tool and paste a prompt below.",
+    noMine = "No own outfits yet - tap + to add one.",
+    edit = "Edit",
+    delete = "Delete",
+    deleteConfirm = "Delete this outfit from the app?",
+    cancel = "Cancel",
+    save = "Save",
+    saveMine = "Save image to gallery",
+    added = "Outfit added",
+    addFail = "Couldn't add the outfit",
+    updated = "Outfit updated",
+    deleted = "Outfit deleted",
     cats = mapOf(
-        "custom" to "Custom", "spring" to "Spring", "summer" to "Summer", "autumn" to "Autumn", "winter" to "Winter",
+        "mine" to "Mine", "custom" to "Custom", "spring" to "Spring", "summer" to "Summer", "autumn" to "Autumn", "winter" to "Winter",
         "lingerie" to "Lingerie", "party" to "Party", "swimwear" to "Swimwear", "sexy" to "Sexy"
     ),
     isPl = false
@@ -169,8 +221,30 @@ fun costumeStrings(lang: AppLanguage): CS = if (lang == AppLanguage.EN) CS(
     genPrompt = "Prompt generowania (EN)",
     customTerms = "Custom: własne obrazy ubrań wygenerowane AI (bez ludzi) dla Galerii poz AI. Wbudowane offline w aplikację.",
     offlineBadge = "OFFLINE",
+    addOutfit = "Dodaj swój ciuch",
+    addOutfitTitle = "Dodaj swój ciuch",
+    pickImage = "Dotknij, aby wybrać zdjęcie stroju",
+    pickImageHint = "Systemowy wybór zdjęć - aplikacja dostaje tylko wybrane zdjęcie (bez dodatkowych uprawnień).",
+    outfitName = "Nazwa stroju",
+    outfitDesc = "Słowa kluczowe / krótki opis (najlepiej po angielsku)",
+    outfitDescHint = "np. black satin slip dress, lace trim, strappy heels",
+    saveOutfit = "Zapisz strój",
+    saving = "Zapisywanie…",
+    needImage = "Najpierw wybierz zdjęcie",
+    mineTerms = "Twój własny strój - zapisany tylko na tym telefonie (pamięć aplikacji). Dodaj to zdjęcie jako referencję w narzędziu AI i wklej prompt poniżej.",
+    noMine = "Nie masz jeszcze własnych strojów - dodaj przyciskiem +.",
+    edit = "Edytuj",
+    delete = "Usuń",
+    deleteConfirm = "Usunąć ten strój z aplikacji?",
+    cancel = "Anuluj",
+    save = "Zapisz",
+    saveMine = "Zapisz obraz w galerii",
+    added = "Dodano strój",
+    addFail = "Nie udało się dodać stroju",
+    updated = "Zapisano zmiany",
+    deleted = "Usunięto strój",
     cats = mapOf(
-        "custom" to "Custom", "spring" to "Wiosna", "summer" to "Lato", "autumn" to "Jesień", "winter" to "Zima",
+        "mine" to "Moje", "custom" to "Custom", "spring" to "Wiosna", "summer" to "Lato", "autumn" to "Jesień", "winter" to "Zima",
         "lingerie" to "Bielizna", "party" to "Impreza", "swimwear" to "Stroje kąpielowe", "sexy" to "Seksowne"
     ),
     isPl = true
@@ -238,7 +312,7 @@ fun CostumeGalleryScreen(
                 label = { Text("${cs.favs} ${state.favorites.size}") },
                 colors = chipColors
             )
-            Costume.CATEGORY_ORDER.filter { (state.counts[it] ?: 0) > 0 }.forEach { key ->
+            Costume.CATEGORY_ORDER.filter { it == Costume.MINE || (state.counts[it] ?: 0) > 0 }.forEach { key ->
                 FilterChip(
                     selected = state.category == key,
                     onClick = { vm.setCategory(key) },
@@ -258,7 +332,7 @@ fun CostumeGalleryScreen(
             }
             state.visible.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(if (state.category == "fav") cs.noFavs else cs.noResults, color = c.textMain, fontWeight = FontWeight.SemiBold)
+                    Text(when (state.category) { "fav" -> cs.noFavs; Costume.MINE -> cs.noMine; else -> cs.noResults }, color = c.textMain, fontWeight = FontWeight.SemiBold)
                     Text(cs.hint, color = c.textMuted, fontSize = 13.sp)
                 }
             }
@@ -330,7 +404,7 @@ private fun CostumeCard(
         }
         Column(Modifier.padding(10.dp)) {
             Text(
-                if (item.isCustom) customName(item, isPl, catLabel) else item.tokens().joinToString(" · "),
+                if (item.isCustom || item.isMine) customName(item, isPl, catLabel) else item.tokens().joinToString(" · "),
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
                 color = c.textMain,
@@ -354,6 +428,22 @@ fun CostumeDetailScreen(
     val c = LocalPoseColors.current
     val context = LocalContext.current
     var dragAcc by remember { mutableFloatStateOf(0f) }
+    var editing by remember { mutableStateOf(false) }
+    var confirmDelete by remember { mutableStateOf(false) }
+
+    if (editing && item.isMine) {
+        EditOutfitDialog(item, cs, onDismiss = { editing = false }) { n, k ->
+            vm.updateMine(item.id, n, k); editing = false
+        }
+    }
+    if (confirmDelete && item.isMine) {
+        AlertDialog(
+            onDismissRequest = { confirmDelete = false },
+            text = { Text(cs.deleteConfirm) },
+            confirmButton = { TextButton(onClick = { confirmDelete = false; vm.deleteMine(item.id); onBack() }) { Text(cs.delete, color = Color(0xFFFF5A7A)) } },
+            dismissButton = { TextButton(onClick = { confirmDelete = false }) { Text(cs.cancel) } }
+        )
+    }
 
     Column(
         Modifier
@@ -367,9 +457,13 @@ fun CostumeDetailScreen(
             Column(Modifier.weight(1f)) {
                 Text(item.id, color = c.accent, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                 Text(
-                    if (item.isCustom) customName(item, cs.isPl, cs.title) else (cs.cats[item.cat] ?: item.cat),
+                    if (item.isCustom || item.isMine) customName(item, cs.isPl, cs.title) else (cs.cats[item.cat] ?: item.cat),
                     color = c.textMain, fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis
                 )
+            }
+            if (item.isMine) {
+                IconButton(onClick = { editing = true }) { Icon(Icons.Default.Edit, cs.edit, tint = c.textMuted) }
+                IconButton(onClick = { confirmDelete = true }) { Icon(Icons.Default.Delete, cs.delete, tint = c.textMuted) }
             }
             IconButton(onClick = { vm.saveImage(item) }) { Icon(Icons.Default.Download, cs.saveOriginal, tint = c.textMuted) }
             IconButton(onClick = { vm.toggleFavorite(item.id) }) {
@@ -424,7 +518,8 @@ fun CostumeDetailScreen(
             Spacer(Modifier.height(6.dp))
             CMetaRow(cs.category, cs.cats[item.cat] ?: item.cat)
             CMetaRow(cs.id, item.id)
-            CMetaRow(cs.keywords, item.tokens().joinToString(", "))
+            if (item.isMine) CMetaRow(cs.outfitName, item.nameEn.orEmpty())
+            if (!item.isMine || item.kw.isNotBlank()) CMetaRow(cs.keywords, if (item.isMine) item.kw else item.tokens().joinToString(", "))
             if (item.isCustom && !item.kwPl.isNullOrBlank()) CMetaRow("PL", item.tokensPl().joinToString(", "))
             if (item.isCustom) CMetaRow("", cs.offlineBadge)
             Spacer(Modifier.height(12.dp))
@@ -451,9 +546,9 @@ fun CostumeDetailScreen(
             OutlinedButton(onClick = { vm.saveImage(item) }, modifier = Modifier.fillMaxWidth().height(46.dp), shape = RoundedCornerShape(14.dp)) {
                 Icon(Icons.Default.Download, null, tint = c.accent)
                 Spacer(Modifier.size(8.dp))
-                Text(if (item.isCustom) cs.saveCustom else cs.saveOriginal, color = c.accent, fontWeight = FontWeight.SemiBold)
+                Text(when { item.isMine -> cs.saveMine; item.isCustom -> cs.saveCustom; else -> cs.saveOriginal }, color = c.accent, fontWeight = FontWeight.SemiBold)
             }
-            if (!item.isCustom) {
+            if (item.isOnline) {
                 Spacer(Modifier.height(6.dp))
                 OutlinedButton(
                     onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(Costume.SITE))) },
@@ -466,21 +561,15 @@ fun CostumeDetailScreen(
                 }
             }
 
-            Spacer(Modifier.height(16.dp))
-            Text(cs.prompts, color = c.textMain, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-            Text(cs.promptsHint, color = c.textMuted, fontSize = 11.sp)
-            Spacer(Modifier.height(6.dp))
-            if (item.isCustom && !item.prompt.isNullOrBlank()) {
-                CPromptCard(cs.genPrompt, item.prompt, cs.copyPrompt) { vm.copyText(it) }
+            // Outfit prompt cards: only for the user's own outfits ("Moje").
+            if (item.isMine) {
+                Spacer(Modifier.height(16.dp))
+                OutfitPromptCards(item, cs) { vm.copyText(it) }
             }
-            CPromptCard("Nano Banana (Gemini)", CostumePrompts.nanoBanana(item), cs.copyPrompt) { vm.copyText(it) }
-            CPromptCard("ChatGPT", CostumePrompts.chatGpt(item), cs.copyPrompt) { vm.copyText(it) }
-            CPromptCard("Grok Imagine", CostumePrompts.grokImagine(item), cs.copyPrompt) { vm.copyText(it) }
-            CPromptCard(cs.withPose, CostumePrompts.withPose(item), cs.copyPrompt) { vm.copyText(it) }
 
             Spacer(Modifier.height(14.dp))
             Text(
-                if (item.isCustom) cs.customTerms else cs.terms,
+                when { item.isMine -> cs.mineTerms; item.isCustom -> cs.customTerms; else -> cs.terms },
                 color = c.textMuted,
                 fontSize = 10.sp,
                 lineHeight = 14.sp,
@@ -490,6 +579,126 @@ fun CostumeDetailScreen(
                     .border(1.dp, c.line, RoundedCornerShape(10.dp))
                     .padding(10.dp)
             )
+            Spacer(Modifier.height(24.dp))
+        }
+    }
+}
+
+@Composable
+fun OutfitPromptCards(item: Costume, cs: CS, onCopy: (String) -> Unit) {
+    val c = LocalPoseColors.current
+    Text(cs.prompts, color = c.textMain, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+    Text(cs.promptsHint, color = c.textMuted, fontSize = 11.sp)
+    Spacer(Modifier.height(6.dp))
+    CPromptCard("Nano Banana (Gemini)", CostumePrompts.nanoBanana(item), cs.copyPrompt, onCopy)
+    CPromptCard("ChatGPT", CostumePrompts.chatGpt(item), cs.copyPrompt, onCopy)
+    CPromptCard("Grok Imagine", CostumePrompts.grokImagine(item), cs.copyPrompt, onCopy)
+    CPromptCard(cs.withPose, CostumePrompts.withPose(item), cs.copyPrompt, onCopy)
+}
+
+@Composable
+private fun EditOutfitDialog(item: Costume, cs: CS, onDismiss: () -> Unit, onSave: (String, String) -> Unit) {
+    val c = LocalPoseColors.current
+    var name by remember(item.id) { mutableStateOf(item.nameEn.orEmpty()) }
+    var kw by remember(item.id) { mutableStateOf(item.kw) }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(cs.edit) },
+        text = {
+            Column {
+                OutlinedTextField(name, { name = it }, label = { Text(cs.outfitName) }, singleLine = true,
+                    modifier = Modifier.fillMaxWidth(), colors = costumeFieldColors(c))
+                Spacer(Modifier.height(8.dp))
+                OutlinedTextField(kw, { kw = it }, label = { Text(cs.outfitDesc) }, minLines = 2,
+                    modifier = Modifier.fillMaxWidth(), colors = costumeFieldColors(c))
+            }
+        },
+        confirmButton = { TextButton(onClick = { onSave(name, kw) }) { Text(cs.save) } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(cs.cancel) } }
+    )
+}
+
+/** Add-your-own-outfit flow: photo picker → name/description → live prompt cards → save. */
+@Composable
+fun AddOutfitScreen(cs: CS, vm: CostumeViewModel, onBack: () -> Unit, onSaved: (String?) -> Unit) {
+    val c = LocalPoseColors.current
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+    var name by remember { mutableStateOf("") }
+    var kw by remember { mutableStateOf("") }
+    var saving by remember { mutableStateOf(false) }
+    var showNeed by remember { mutableStateOf(false) }
+    val picker = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        if (uri != null) { imageUri = uri; showNeed = false }
+    }
+    val launch = { picker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) }
+    val preview = Costume(id = "MOJE-NEW", cat = Costume.MINE, kw = kw.trim(), nameEn = name.trim(), namePl = name.trim())
+
+    Column(
+        Modifier
+            .fillMaxSize()
+            .background(c.bg)
+            .statusBarsPadding()
+            .windowInsetsPadding(WindowInsets.navigationBars)
+    ) {
+        Row(Modifier.fillMaxWidth().padding(4.dp), verticalAlignment = Alignment.CenterVertically) {
+            IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, null, tint = c.textMain) }
+            Text(cs.addOutfitTitle, color = c.textMain, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+        }
+        Column(
+            Modifier
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp)
+        ) {
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(3f / 4f)
+                    .clip(RoundedCornerShape(14.dp))
+                    .background(c.surface)
+                    .border(1.dp, if (showNeed) Color(0xFFFF5A7A) else c.line, RoundedCornerShape(14.dp))
+                    .clickable { launch() },
+                contentAlignment = Alignment.Center
+            ) {
+                if (imageUri != null) {
+                    AsyncImage(model = imageUri, contentDescription = null, contentScale = ContentScale.Fit, modifier = Modifier.fillMaxSize())
+                } else {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(20.dp)) {
+                        Icon(Icons.Default.AddPhotoAlternate, null, tint = c.accent, modifier = Modifier.size(48.dp))
+                        Spacer(Modifier.height(8.dp))
+                        Text(cs.pickImage, color = c.textMain, fontWeight = FontWeight.SemiBold)
+                        Text(cs.pickImageHint, color = c.textMuted, fontSize = 11.sp)
+                    }
+                }
+            }
+            if (showNeed) Text(cs.needImage, color = Color(0xFFFF5A7A), fontSize = 12.sp)
+            Spacer(Modifier.height(14.dp))
+            OutlinedTextField(
+                value = name, onValueChange = { name = it },
+                label = { Text(cs.outfitName) }, singleLine = true,
+                modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp), colors = costumeFieldColors(c)
+            )
+            Spacer(Modifier.height(10.dp))
+            OutlinedTextField(
+                value = kw, onValueChange = { kw = it },
+                label = { Text(cs.outfitDesc) }, placeholder = { Text(cs.outfitDescHint) }, minLines = 2,
+                modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp), colors = costumeFieldColors(c)
+            )
+            Spacer(Modifier.height(14.dp))
+            Button(
+                onClick = {
+                    val uri = imageUri
+                    if (uri == null) { showNeed = true; return@Button }
+                    saving = true
+                    vm.addMine(uri, name, kw) { id -> saving = false; onSaved(id) }
+                },
+                enabled = !saving,
+                modifier = Modifier.fillMaxWidth().height(48.dp),
+                shape = RoundedCornerShape(14.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = c.accent, contentColor = Color.White)
+            ) { Text(if (saving) cs.saving else cs.saveOutfit, fontWeight = FontWeight.Bold) }
+            Spacer(Modifier.height(18.dp))
+            OutfitPromptCards(preview, cs) { vm.copyText(it) }
             Spacer(Modifier.height(24.dp))
         }
     }

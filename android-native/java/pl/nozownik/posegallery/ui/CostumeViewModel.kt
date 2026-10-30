@@ -17,6 +17,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import pl.nozownik.posegallery.data.Costume
 import pl.nozownik.posegallery.data.CostumeRepository
+import pl.nozownik.posegallery.data.UserOutfitStore
+import android.net.Uri
 import pl.nozownik.posegallery.util.ImageClipboard
 import pl.nozownik.posegallery.util.ImageSaver
 
@@ -35,7 +37,14 @@ data class CostumeUiState(
 
 class CostumeViewModel(app: Application) : AndroidViewModel(app) {
     private val repo = CostumeRepository(app)
-    private val _data = MutableStateFlow(CostumeUiState())
+    private val mine = UserOutfitStore(app)
+    private val _base = MutableStateFlow(CostumeUiState())
+    private val _data = combine(_base, mine.items) { b, m ->
+        if (b.loading || b.error != null) b else {
+            val all = m + b.all
+            b.copy(all = all, counts = all.groupingBy { it.cat }.eachCount())
+        }
+    }
     private val _cat = MutableStateFlow("")
     private val _q = MutableStateFlow("")
     private val _tick = MutableStateFlow(0L)
@@ -59,13 +68,9 @@ class CostumeViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch {
             try {
                 val all = repo.load()
-                _data.value = CostumeUiState(
-                    loading = false,
-                    all = all,
-                    counts = all.groupingBy { it.cat }.eachCount()
-                )
+                _base.value = CostumeUiState(loading = false, all = all)
             } catch (e: Exception) {
-                _data.value = CostumeUiState(loading = false, error = e.message ?: "error")
+                _base.value = CostumeUiState(loading = false, error = e.message ?: "error")
             }
         }
     }
@@ -75,7 +80,7 @@ class CostumeViewModel(app: Application) : AndroidViewModel(app) {
         if (c.id.lowercase().contains(w)) return true
         if (c.cat.startsWith(e) || CostumeSearch.categoryLabelMatches(c.cat, w)) return true
         if (c.tokens().any { it.startsWith(e) }) return true
-        return c.isCustom && c.searchHay().contains(w)
+        return (c.isCustom || c.isMine) && c.searchHay().contains(w)
     }
 
     fun setCategory(cat: String) {
@@ -87,14 +92,34 @@ class CostumeViewModel(app: Application) : AndroidViewModel(app) {
     fun setQuery(q: String) { _q.value = q }
     private fun bump() { _tick.value = System.currentTimeMillis() }
 
-    fun find(id: String): Costume? = _data.value.all.find { it.id == id }
+    fun find(id: String): Costume? = uiState.value.all.find { it.id == id }
     fun toggleFavorite(id: String) = repo.toggleFavorite(id)
 
     fun adjacent(id: String, dir: Int): String? {
-        val list = uiState.value.visible.ifEmpty { _data.value.all }
+        val list = uiState.value.visible.ifEmpty { uiState.value.all }
         val i = list.indexOfFirst { it.id == id }
         if (i < 0) return null
         return list.getOrNull(i + dir)?.id
+    }
+
+    fun addMine(uri: Uri, name: String, keywords: String, onDone: (String?) -> Unit) {
+        viewModelScope.launch {
+            val item = runCatching { mine.add(uri, name, keywords) }.getOrNull()
+            _events.emit(if (item != null) "outfit_added" else "outfit_add_fail")
+            onDone(item?.id)
+        }
+    }
+
+    fun updateMine(id: String, name: String, keywords: String) {
+        viewModelScope.launch { mine.update(id, name, keywords); _events.emit("outfit_updated") }
+    }
+
+    fun deleteMine(id: String) {
+        viewModelScope.launch {
+            mine.delete(id)
+            if (id in uiState.value.favorites) repo.toggleFavorite(id)
+            _events.emit("outfit_deleted")
+        }
     }
 
     fun copyText(text: String, event: String = "copied_tags") {
@@ -113,7 +138,11 @@ class CostumeViewModel(app: Application) : AndroidViewModel(app) {
     /** Saves one original PNG (single image, on explicit user action). */
     fun saveImage(c: Costume) {
         viewModelScope.launch {
-            val ok = if (c.isCustom) ImageSaver.savePoseImage(getApplication(), c.originalUrl(), c.id, "image/webp", "webp")
+            val ok = if (c.isMine) {
+                val ext = c.localPath.orEmpty().substringAfterLast('.', "jpg")
+                val mime = when (ext) { "png" -> "image/png"; "webp" -> "image/webp"; "gif" -> "image/gif"; else -> "image/jpeg" }
+                ImageSaver.savePoseImage(getApplication(), c.originalUrl(), c.id, mime, ext)
+            } else if (c.isCustom) ImageSaver.savePoseImage(getApplication(), c.originalUrl(), c.id, "image/webp", "webp")
             else ImageSaver.savePoseImage(getApplication(), c.originalUrl(), c.id, "image/png", "png")
             _events.emit(if (ok) "saved_ok" else "saved_fail")
         }
