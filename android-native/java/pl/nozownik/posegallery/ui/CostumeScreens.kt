@@ -37,6 +37,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.AddPhotoAlternate
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material3.AlertDialog
 import androidx.compose.runtime.mutableStateOf
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -113,6 +114,7 @@ data class CS(
     val customTerms: String,
     val offlineBadge: String,
     val addOutfit: String,
+    val proTip: String,
     val addOutfitTitle: String,
     val pickImage: String,
     val pickImageHint: String,
@@ -167,6 +169,7 @@ fun costumeStrings(lang: AppLanguage): CS = if (lang == AppLanguage.EN) CS(
     customTerms = "Custom: own AI-generated garment images (no people) made for Galeria poz AI. Bundled offline in the app.",
     offlineBadge = "OFFLINE",
     addOutfit = "Add your outfit",
+    proTip = "Got a photo of someone wearing the outfit? Put it into Nano Banana / ChatGPT / Grok with this prompt, then add the result here.",
     addOutfitTitle = "Add your outfit",
     pickImage = "Tap to pick an outfit photo",
     pickImageHint = "System photo picker - the app gets only the photo you choose (no extra permissions).",
@@ -176,7 +179,7 @@ fun costumeStrings(lang: AppLanguage): CS = if (lang == AppLanguage.EN) CS(
     saveOutfit = "Save outfit",
     saving = "Saving…",
     needImage = "Pick a photo first",
-    mineTerms = "Your own outfit - saved only on this phone (app storage). Attach this photo as the reference image in the AI tool and paste a prompt below.",
+    mineTerms = "Your own outfit - saved only on this phone (app storage). Attach it as a reference image in your AI tool.",
     noMine = "No own outfits yet - tap + to add one.",
     edit = "Edit",
     delete = "Delete",
@@ -222,6 +225,7 @@ fun costumeStrings(lang: AppLanguage): CS = if (lang == AppLanguage.EN) CS(
     customTerms = "Custom: własne obrazy ubrań wygenerowane AI (bez ludzi) dla Galerii poz AI. Wbudowane offline w aplikację.",
     offlineBadge = "OFFLINE",
     addOutfit = "Dodaj swój ciuch",
+    proTip = "Masz zdjęcie kogoś w ciuchu? Wrzuć je do Nano Banana / ChatGPT / Grok z tym promptem, a potem dodaj wynik tutaj.",
     addOutfitTitle = "Dodaj swój ciuch",
     pickImage = "Dotknij, aby wybrać zdjęcie stroju",
     pickImageHint = "Systemowy wybór zdjęć - aplikacja dostaje tylko wybrane zdjęcie (bez dodatkowych uprawnień).",
@@ -231,7 +235,7 @@ fun costumeStrings(lang: AppLanguage): CS = if (lang == AppLanguage.EN) CS(
     saveOutfit = "Zapisz strój",
     saving = "Zapisywanie…",
     needImage = "Najpierw wybierz zdjęcie",
-    mineTerms = "Twój własny strój - zapisany tylko na tym telefonie (pamięć aplikacji). Dodaj to zdjęcie jako referencję w narzędziu AI i wklej prompt poniżej.",
+    mineTerms = "Twój własny strój - zapisany tylko na tym telefonie (pamięć aplikacji). Dodaj je jako referencję w narzędziu AI.",
     noMine = "Nie masz jeszcze własnych strojów - dodaj przyciskiem +.",
     edit = "Edytuj",
     delete = "Usuń",
@@ -561,11 +565,6 @@ fun CostumeDetailScreen(
                 }
             }
 
-            // Outfit prompt cards: only for the user's own outfits ("Moje").
-            if (item.isMine) {
-                Spacer(Modifier.height(16.dp))
-                OutfitPromptCards(item, cs) { vm.copyText(it) }
-            }
 
             Spacer(Modifier.height(14.dp))
             Text(
@@ -584,16 +583,55 @@ fun CostumeDetailScreen(
     }
 }
 
+/** Prompt that turns any outfit photo (person wearing it, messy phone shot) into a clothing-only image in the Custom style. */
+const val OUTFIT_CLEANUP_PROMPT =
+    "Use the attached photo only as a reference for the clothing. Recreate exactly the same outfit - every garment and accessory " +
+    "with the same colors, fabrics, cut, pattern, layering and details - as a ghost mannequin product photo: the garments are shown " +
+    "on an invisible mannequin (hollow, no body), clothing only, absolutely no person, no skin, no face, no hands, no legs, no body parts. " +
+    "Remove the person and the original background completely. Plain light grey seamless studio background, soft even lighting, " +
+    "centered, entire outfit visible with space around it, 2:3 portrait composition, photorealistic e-commerce catalog photo, " +
+    "sharp fabric detail, no text, no logo, no watermark."
+
 @Composable
-fun OutfitPromptCards(item: Costume, cs: CS, onCopy: (String) -> Unit) {
+fun ProTipBox(cs: CS, onCopy: (String) -> Unit) {
     val c = LocalPoseColors.current
-    Text(cs.prompts, color = c.textMain, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-    Text(cs.promptsHint, color = c.textMuted, fontSize = 11.sp)
-    Spacer(Modifier.height(6.dp))
-    CPromptCard("Nano Banana (Gemini)", CostumePrompts.nanoBanana(item), cs.copyPrompt, onCopy)
-    CPromptCard("ChatGPT", CostumePrompts.chatGpt(item), cs.copyPrompt, onCopy)
-    CPromptCard("Grok Imagine", CostumePrompts.grokImagine(item), cs.copyPrompt, onCopy)
-    CPromptCard(cs.withPose, CostumePrompts.withPose(item), cs.copyPrompt, onCopy)
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(14.dp))
+            .background(c.accentSoft)
+            .border(1.5.dp, c.accent, RoundedCornerShape(14.dp))
+            .padding(12.dp)
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(Icons.Default.Lightbulb, null, tint = c.accent, modifier = Modifier.size(20.dp))
+            Spacer(Modifier.size(6.dp))
+            Text("PRO TIP", color = c.accent, fontWeight = FontWeight.ExtraBold, fontSize = 14.sp)
+        }
+        Spacer(Modifier.height(4.dp))
+        Text(cs.proTip, color = c.textMain, fontSize = 13.sp, lineHeight = 18.sp)
+        Spacer(Modifier.height(8.dp))
+        Text(
+            OUTFIT_CLEANUP_PROMPT,
+            color = c.textMuted, fontSize = 11.sp, lineHeight = 15.sp,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(10.dp))
+                .background(c.surface)
+                .padding(10.dp)
+        )
+        Spacer(Modifier.height(8.dp))
+        Button(
+            onClick = { onCopy(OUTFIT_CLEANUP_PROMPT) },
+            modifier = Modifier.fillMaxWidth().height(44.dp),
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = c.accent, contentColor = Color.White)
+        ) {
+            Icon(Icons.Default.ContentCopy, null)
+            Spacer(Modifier.size(8.dp))
+            Text(cs.copyPrompt, fontWeight = FontWeight.Bold)
+        }
+    }
 }
 
 @Composable
@@ -631,7 +669,6 @@ fun AddOutfitScreen(cs: CS, vm: CostumeViewModel, onBack: () -> Unit, onSaved: (
         if (uri != null) { imageUri = uri; showNeed = false }
     }
     val launch = { picker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) }
-    val preview = Costume(id = "MOJE-NEW", cat = Costume.MINE, kw = kw.trim(), nameEn = name.trim(), namePl = name.trim())
 
     Column(
         Modifier
@@ -650,6 +687,8 @@ fun AddOutfitScreen(cs: CS, vm: CostumeViewModel, onBack: () -> Unit, onSaved: (
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp)
         ) {
+            ProTipBox(cs) { vm.copyText(it) }
+            Spacer(Modifier.height(12.dp))
             Box(
                 Modifier
                     .fillMaxWidth()
@@ -697,8 +736,6 @@ fun AddOutfitScreen(cs: CS, vm: CostumeViewModel, onBack: () -> Unit, onSaved: (
                 shape = RoundedCornerShape(14.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = c.accent, contentColor = Color.White)
             ) { Text(if (saving) cs.saving else cs.saveOutfit, fontWeight = FontWeight.Bold) }
-            Spacer(Modifier.height(18.dp))
-            OutfitPromptCards(preview, cs) { vm.copyText(it) }
             Spacer(Modifier.height(24.dp))
         }
     }

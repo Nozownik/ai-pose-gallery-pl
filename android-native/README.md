@@ -3,6 +3,11 @@
 Package: `pl.nozownik.posegallery`  
 Buildable project: sibling `ai-pose-gallery-pl-app`
 
+## v2.4.2
+
+- Ekran „Dodaj swój ciuch”: zdjęcie + nazwa/opis i ramka **PRO TIP** z gotowym promptem (kopiuj) do przerobienia zdjęcia (np. osoby w ciuchu) na sam strój w stylu Custom: ghost mannequin, bez człowieka, jasnoszare tło studyjne, 2:3.
+- Usunięte karty promptów (Nano Banana / ChatGPT / Grok Imagine / Strój + poza) ze wszystkich ekranów strojów. Edycja i usuwanie własnych strojów zostają.
+
 ## v2.4.1
 
 - **Ubrania → „Dodaj swój ciuch” (+)**: dodaj własny strój ze zdjęcia z telefonu (systemowy wybór zdjęć, bez nowych uprawnień), z nazwą i opcjonalnym opisem/słowami kluczowymi. Zapisywany tylko lokalnie w pamięci aplikacji, kategoria **Moje** (z licznikiem), wyszukiwanie, ulubione, edycja i usuwanie.
@@ -35,4 +40,4 @@ Keeps 2.1.1: larger thumbs, copy image bitmap, style prompts only on custom crea
 
 Skipped: #9 seed/LoRA
 
-versionName 2.4.1 / versionCode 9
+versionName 2.4.2 / versionCode 10
