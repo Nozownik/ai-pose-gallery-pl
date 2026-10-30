@@ -34,3 +34,4 @@ dist/
 # Custom outfit images are kept local only (bundled in APK builds, not published)
 android-native/assets/custom/img/
 android-native/assets/custom/thumbs/
+android-native/assets/custom/custom.json
