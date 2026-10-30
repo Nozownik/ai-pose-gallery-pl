@@ -1,0 +1,402 @@
+[
+ {
+  "id": "CUST-001",
+  "nameEn": "Black lace lingerie set",
+  "namePl": "Czarny koronkowy komplet bielizny",
+  "kw": "black lace bra briefs garter belt stockings",
+  "kwPl": "czarny koronka stanik majtki pas pończochy",
+  "prompt": "Outfit: black floral lace balconette bra, matching high-waist lace briefs, lace garter belt with straps and sheer black stockings with lace tops. Ghost mannequin product photo: the garments are shown on an invisible mannequin (hollow, no body), clothing only, absolutely no person, no skin, no face, no hands, no legs, no body parts. Plain light grey seamless studio background, soft even lighting, centered, entire outfit visible with space around it, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-002",
+  "nameEn": "Red satin babydoll",
+  "namePl": "Czerwona satynowa koszulka babydoll",
+  "kw": "red satin babydoll lace trim thong",
+  "kwPl": "czerwony satyna babydoll koronka stringi",
+  "prompt": "Outfit: short red satin babydoll with lace cups, open split front, thin straps, matching red lace thong. Ghost mannequin product photo: the garments are shown on an invisible mannequin (hollow, no body), clothing only, absolutely no person, no skin, no face, no hands, no legs, no body parts. Plain light grey seamless studio background, soft even lighting, centered, entire outfit visible with space around it, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-003",
+  "nameEn": "White bridal corset",
+  "namePl": "Biały ślubny gorset",
+  "kw": "white corset garter stockings bridal lace",
+  "kwPl": "biały gorset ślubny pas pończochy koronka",
+  "prompt": "Outfit: white satin overbust lace-up corset with lace overlay, white garter straps, sheer white stockings with lace bands. Ghost mannequin product photo: the garments are shown on an invisible mannequin (hollow, no body), clothing only, absolutely no person, no skin, no face, no hands, no legs, no body parts. Plain light grey seamless studio background, soft even lighting, centered, entire outfit visible with space around it, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-004",
+  "nameEn": "Black PVC mini dress",
+  "namePl": "Czarna sukienka mini z PVC",
+  "kw": "black pvc vinyl mini dress zipper",
+  "kwPl": "czarny lateks winyl sukienka mini zamek",
+  "prompt": "Outfit: glossy black PVC vinyl bodycon mini dress with front zipper and square neckline. Ghost mannequin product photo: the garments are shown on an invisible mannequin (hollow, no body), clothing only, absolutely no person, no skin, no face, no hands, no legs, no body parts. Plain light grey seamless studio background, soft even lighting, centered, entire outfit visible with space around it, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-005",
+  "nameEn": "Red latex catsuit",
+  "namePl": "Czerwony lateksowy kombinezon",
+  "kw": "red latex catsuit zipper glossy",
+  "kwPl": "czerwony lateks kombinezon zamek",
+  "prompt": "Outfit: glossy red latex full-length catsuit with long sleeves and front zipper. Ghost mannequin product photo: the garments are shown on an invisible mannequin (hollow, no body), clothing only, absolutely no person, no skin, no face, no hands, no legs, no body parts. Plain light grey seamless studio background, soft even lighting, centered, entire outfit visible with space around it, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-006",
+  "nameEn": "Fishnet bodystocking outfit",
+  "namePl": "Kabaretkowy bodystocking",
+  "kw": "black fishnet bodystocking boots",
+  "kwPl": "czarny kabaretki bodystocking kozaki",
+  "prompt": "Flat lay product photo from above: a black fishnet long-sleeve bodystocking laid flat and neatly spread out on a light grey surface, next to a pair of black thigh-high stiletto boots lying beside it. Clothing only, no person, no mannequin, no body shape, no skin. Plain light grey background, soft even lighting, centered, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-007",
+  "nameEn": "Leather harness top",
+  "namePl": "Skórzany top z uprzężą",
+  "kw": "black leather harness bralette straps rings",
+  "kwPl": "czarny skóra uprząż bralet paski kółka",
+  "prompt": "Outfit: black leather strappy harness bralette with silver O-rings and buckles, matching high-waist leather shorts. Ghost mannequin product photo: the garments are shown on an invisible mannequin (hollow, no body), clothing only, absolutely no person, no skin, no face, no hands, no legs, no body parts. Plain light grey seamless studio background, soft even lighting, centered, entire outfit visible with space around it, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-008",
+  "nameEn": "Pink micro skirt and crop top",
+  "namePl": "Różowa mikro spódniczka i crop top",
+  "kw": "pink micro mini skirt crop top",
+  "kwPl": "różowy mikro spódnica mini crop top",
+  "prompt": "Outfit: hot pink pleated micro mini skirt with a tiny pink ribbed crop top and white platform heels. Ghost mannequin product photo: the garments are shown on an invisible mannequin (hollow, no body), clothing only, absolutely no person, no skin, no face, no hands, no legs, no body parts. Plain light grey seamless studio background, soft even lighting, centered, entire outfit visible with space around it, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-009",
+  "nameEn": "Sheer mesh dress",
+  "namePl": "Prześwitująca siateczkowa sukienka",
+  "kw": "black sheer mesh dress slip",
+  "kwPl": "czarny siatka prześwitująca sukienka halka",
+  "prompt": "Outfit: long-sleeve sheer black mesh bodycon dress layered over a black satin slip. Ghost mannequin product photo: the garments are shown on an invisible mannequin (hollow, no body), clothing only, absolutely no person, no skin, no face, no hands, no legs, no body parts. Plain light grey seamless studio background, soft even lighting, centered, entire outfit visible with space around it, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-010",
+  "nameEn": "Cutout club dress",
+  "namePl": "Klubowa sukienka z wycięciami",
+  "kw": "silver club dress cutouts sequin",
+  "kwPl": "srebrny sukienka klubowa wycięcia cekiny",
+  "prompt": "Outfit: silver sequin mini club dress with side waist cutouts and halter neck. Ghost mannequin product photo: the garments are shown on an invisible mannequin (hollow, no body), clothing only, absolutely no person, no skin, no face, no hands, no legs, no body parts. Plain light grey seamless studio background, soft even lighting, centered, entire outfit visible with space around it, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-011",
+  "nameEn": "Gold metallic bikini",
+  "namePl": "Złote metaliczne bikini",
+  "kw": "gold metallic bikini string",
+  "kwPl": "złoty metaliczny bikini wiązane",
+  "prompt": "Outfit: gold metallic triangle string bikini top and string bikini bottoms with gold chain details. Ghost mannequin product photo: the garments are shown on an invisible mannequin (hollow, no body), clothing only, absolutely no person, no skin, no face, no hands, no legs, no body parts. Plain light grey seamless studio background, soft even lighting, centered, entire outfit visible with space around it, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-012",
+  "nameEn": "Leather bondage-style dress",
+  "namePl": "Skórzana sukienka w stylu bondage",
+  "kw": "black leather dress buckles straps",
+  "kwPl": "czarny skóra sukienka sprzączki paski",
+  "prompt": "Outfit: black leather mini dress with multiple buckle straps, collar and silver hardware, bondage-inspired fashion. Ghost mannequin product photo: the garments are shown on an invisible mannequin (hollow, no body), clothing only, absolutely no person, no skin, no face, no hands, no legs, no body parts. Plain light grey seamless studio background, soft even lighting, centered, entire outfit visible with space around it, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-013",
+  "nameEn": "Sexy nurse costume",
+  "namePl": "Seksowny strój pielęgniarki",
+  "kw": "white nurse costume mini dress red cross stockings",
+  "kwPl": "biały pielęgniarka kostium sukienka mini pończochy",
+  "prompt": "Outfit: white short nurse costume dress with red trim and red cross emblem, matching nurse cap and white stockings. Ghost mannequin product photo: the garments are shown on an invisible mannequin (hollow, no body), clothing only, absolutely no person, no skin, no face, no hands, no legs, no body parts. Plain light grey seamless studio background, soft even lighting, centered, entire outfit visible with space around it, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-014",
+  "nameEn": "French maid costume",
+  "namePl": "Strój pokojówki",
+  "kw": "black white maid costume apron frill",
+  "kwPl": "czarny biały pokojówka kostium fartuszek falbanki",
+  "prompt": "Outfit: black satin short French maid costume dress with white frilly apron, lace headband and black stockings. Ghost mannequin product photo: the garments are shown on an invisible mannequin (hollow, no body), clothing only, absolutely no person, no skin, no face, no hands, no legs, no body parts. Plain light grey seamless studio background, soft even lighting, centered, entire outfit visible with space around it, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-015",
+  "nameEn": "Police costume",
+  "namePl": "Seksowny strój policjantki",
+  "kw": "navy police costume mini skirt cap",
+  "kwPl": "granatowy policjantka kostium spódnica mini czapka",
+  "prompt": "Outfit: navy blue fitted police-style costume: short-sleeve crop shirt with badge, navy micro mini skirt, police cap and toy handcuffs. Ghost mannequin product photo: the garments are shown on an invisible mannequin (hollow, no body), clothing only, absolutely no person, no skin, no face, no hands, no legs, no body parts. Plain light grey seamless studio background, soft even lighting, centered, entire outfit visible with space around it, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-016",
+  "nameEn": "Purple lace bodysuit",
+  "namePl": "Fioletowe koronkowe body",
+  "kw": "purple lace bodysuit high cut",
+  "kwPl": "fioletowy koronka body wysokie wycięcie",
+  "prompt": "Outfit: deep purple sheer lace high-cut bodysuit with plunging neckline and thin straps. Ghost mannequin product photo: the garments are shown on an invisible mannequin (hollow, no body), clothing only, absolutely no person, no skin, no face, no hands, no legs, no body parts. Plain light grey seamless studio background, soft even lighting, centered, entire outfit visible with space around it, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-017",
+  "nameEn": "Black satin corset and skirt",
+  "namePl": "Czarny satynowy gorset i spódnica",
+  "kw": "black satin corset mini skirt",
+  "kwPl": "czarny satyna gorset spódnica mini",
+  "prompt": "Outfit: black satin underbust corset with lacing over a black leather micro mini skirt. Ghost mannequin product photo: the garments are shown on an invisible mannequin (hollow, no body), clothing only, absolutely no person, no skin, no face, no hands, no legs, no body parts. Plain light grey seamless studio background, soft even lighting, centered, entire outfit visible with space around it, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-018",
+  "nameEn": "White mesh bodysuit",
+  "namePl": "Białe siateczkowe body",
+  "kw": "white mesh bodysuit long sleeve",
+  "kwPl": "biały siatka body długi rękaw",
+  "prompt": "Flat lay product photo from above: a sheer white mesh long-sleeve bodysuit with high-cut legs, laid flat and neatly spread on a light grey surface. Clothing only, no person, no mannequin, no body shape, no skin. Plain light grey background, soft even lighting, centered, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-019",
+  "nameEn": "Red lace garter set",
+  "namePl": "Czerwony komplet z pasem do pończoch",
+  "kw": "red lace bra garter belt stockings",
+  "kwPl": "czerwony koronka stanik pas pończochy",
+  "prompt": "Outfit: red lace push-up bra, red lace garter belt and red-seamed sheer stockings. Ghost mannequin product photo: the garments are shown on an invisible mannequin (hollow, no body), clothing only, absolutely no person, no skin, no face, no hands, no legs, no body parts. Plain light grey seamless studio background, soft even lighting, centered, entire outfit visible with space around it, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-020",
+  "nameEn": "Leopard print bodysuit",
+  "namePl": "Body w panterkę",
+  "kw": "leopard print bodysuit mesh",
+  "kwPl": "panterka body siatka",
+  "prompt": "Flat lay product photo from above: a leopard print mesh bodysuit with long sleeves and plunging neckline, laid flat and neatly spread on a light grey surface. Clothing only, no person, no mannequin, no body shape, no skin. Plain light grey background, soft even lighting, centered, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-021",
+  "nameEn": "Black latex leggings and bra",
+  "namePl": "Czarne lateksowe legginsy i stanik",
+  "kw": "black latex leggings bra top",
+  "kwPl": "czarny lateks legginsy stanik",
+  "prompt": "Outfit: glossy black latex high-waist leggings with a matching latex bra top. Ghost mannequin product photo: the garments are shown on an invisible mannequin (hollow, no body), clothing only, absolutely no person, no skin, no face, no hands, no legs, no body parts. Plain light grey seamless studio background, soft even lighting, centered, entire outfit visible with space around it, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-022",
+  "nameEn": "Pink babydoll with feathers",
+  "namePl": "Różowa koszulka babydoll z piórkami",
+  "kw": "pink sheer babydoll feather trim",
+  "kwPl": "różowy prześwitująca babydoll pióra",
+  "prompt": "Fashion catalog product photo of a pastel pink chiffon babydoll nightie with fluffy feather trim along the hem and a matching pink briefs, shown on an invisible ghost mannequin, garments only, no person. Plain light grey studio background, soft lighting, centered, portrait composition, photorealistic, no text, no logo."
+ },
+ {
+  "id": "CUST-023",
+  "nameEn": "Blue satin slip dress",
+  "namePl": "Niebieska satynowa sukienka na ramiączkach",
+  "kw": "blue satin slip dress lace",
+  "kwPl": "niebieski satyna sukienka halka koronka",
+  "prompt": "Outfit: short royal blue satin slip dress with black lace trim and thin spaghetti straps. Ghost mannequin product photo: the garments are shown on an invisible mannequin (hollow, no body), clothing only, absolutely no person, no skin, no face, no hands, no legs, no body parts. Plain light grey seamless studio background, soft even lighting, centered, entire outfit visible with space around it, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-024",
+  "nameEn": "Harness and fishnets",
+  "namePl": "Uprząż i kabaretki",
+  "kw": "black harness fishnet tights shorts",
+  "kwPl": "czarny uprząż kabaretki rajstopy szorty",
+  "prompt": "Flat lay product photo from above, three separate items arranged neatly on a light grey surface: at top a black elastic strappy body harness top with silver O-rings, in the middle a pair of glossy black vinyl hot pants, at the bottom a pair of black fishnet tights folded neatly. Clothing only, no person, no mannequin, no skin. Plain light grey background, soft even lighting, portrait composition, photorealistic e-commerce catalog photo, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-025",
+  "nameEn": "Vinyl thigh-high boots set",
+  "namePl": "Winylowe kozaki za kolano",
+  "kw": "red vinyl thigh high boots mini dress",
+  "kwPl": "czerwony winyl kozaki za kolano sukienka mini",
+  "prompt": "Outfit: red vinyl strapless mini dress with matching red vinyl thigh-high stiletto boots. Ghost mannequin product photo: the garments are shown on an invisible mannequin (hollow, no body), clothing only, absolutely no person, no skin, no face, no hands, no legs, no body parts. Plain light grey seamless studio background, soft even lighting, centered, entire outfit visible with space around it, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-026",
+  "nameEn": "White lace teddy",
+  "namePl": "Biała koronkowa koszulka teddy",
+  "kw": "white lace teddy bodysuit",
+  "kwPl": "biały koronka teddy body",
+  "prompt": "Outfit: white floral lace teddy bodysuit with scalloped edges and thin straps. Ghost mannequin product photo: the garments are shown on an invisible mannequin (hollow, no body), clothing only, absolutely no person, no skin, no face, no hands, no legs, no body parts. Plain light grey seamless studio background, soft even lighting, centered, entire outfit visible with space around it, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-027",
+  "nameEn": "Emerald velvet corset dress",
+  "namePl": "Szmaragdowa aksamitna sukienka gorsetowa",
+  "kw": "emerald velvet corset mini dress",
+  "kwPl": "szmaragdowy zielony aksamit gorset sukienka mini",
+  "prompt": "Outfit: emerald green velvet corset-style mini dress with sweetheart neckline and boning. Ghost mannequin product photo: the garments are shown on an invisible mannequin (hollow, no body), clothing only, absolutely no person, no skin, no face, no hands, no legs, no body parts. Plain light grey seamless studio background, soft even lighting, centered, entire outfit visible with space around it, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-028",
+  "nameEn": "Cutout one-piece swimsuit",
+  "namePl": "Strój kąpielowy z wycięciami",
+  "kw": "black cutout one-piece swimsuit",
+  "kwPl": "czarny strój kąpielowy jednoczęściowy wycięcia",
+  "prompt": "Outfit: black one-piece swimsuit with large side cutouts and plunging neckline. Ghost mannequin product photo: the garments are shown on an invisible mannequin (hollow, no body), clothing only, absolutely no person, no skin, no face, no hands, no legs, no body parts. Plain light grey seamless studio background, soft even lighting, centered, entire outfit visible with space around it, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-029",
+  "nameEn": "Neon micro bikini",
+  "namePl": "Neonowe mikro bikini",
+  "kw": "neon green micro bikini",
+  "kwPl": "neonowy zielony mikro bikini",
+  "prompt": "Flat lay product photo from above: a neon lime green micro triangle bikini set (top and bottoms), laid flat and neatly spread on a light grey surface. Clothing only, no person, no mannequin, no body shape, no skin. Plain light grey background, soft even lighting, centered, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-030",
+  "nameEn": "Studded leather crop top and skirt",
+  "namePl": "Skórzany top i spódnica z ćwiekami",
+  "kw": "black leather studded crop top skirt",
+  "kwPl": "czarny skóra ćwieki top spódnica",
+  "prompt": "Outfit: black leather crop top and micro mini skirt covered in silver studs. Ghost mannequin product photo: the garments are shown on an invisible mannequin (hollow, no body), clothing only, absolutely no person, no skin, no face, no hands, no legs, no body parts. Plain light grey seamless studio background, soft even lighting, centered, entire outfit visible with space around it, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-031",
+  "nameEn": "Burgundy lace bralette set",
+  "namePl": "Bordowy komplet z bralette",
+  "kw": "burgundy lace bralette briefs",
+  "kwPl": "bordowy koronka bralet figi",
+  "prompt": "Outfit: burgundy lace bralette with strappy details and matching high-cut briefs. Ghost mannequin product photo: the garments are shown on an invisible mannequin (hollow, no body), clothing only, absolutely no person, no skin, no face, no hands, no legs, no body parts. Plain light grey seamless studio background, soft even lighting, centered, entire outfit visible with space around it, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-032",
+  "nameEn": "Sheer robe and lingerie",
+  "namePl": "Prześwitujący szlafrok i bielizna",
+  "kw": "black sheer robe lace lingerie",
+  "kwPl": "czarny prześwitujący szlafrok koronka bielizna",
+  "prompt": "Outfit: short sheer black chiffon robe with lace trim over a black lace bra and briefs set. Ghost mannequin product photo: the garments are shown on an invisible mannequin (hollow, no body), clothing only, absolutely no person, no skin, no face, no hands, no legs, no body parts. Plain light grey seamless studio background, soft even lighting, centered, entire outfit visible with space around it, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-033",
+  "nameEn": "Bunny-style costume",
+  "namePl": "Kostium króliczka",
+  "kw": "black satin bunny costume corset ears",
+  "kwPl": "czarny satyna króliczek kostium gorset uszy",
+  "prompt": "Outfit: black satin strapless bunny costume corset bodysuit with white cuffs, bow tie collar, bunny ears headband and fishnet tights. Ghost mannequin product photo: the garments are shown on an invisible mannequin (hollow, no body), clothing only, absolutely no person, no skin, no face, no hands, no legs, no body parts. Plain light grey seamless studio background, soft even lighting, centered, entire outfit visible with space around it, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-034",
+  "nameEn": "Secretary-style costume",
+  "namePl": "Kostium sekretarki",
+  "kw": "black pencil micro skirt sheer white blouse bow pumps",
+  "kwPl": "czarny ołówkowa spódnica mini prześwitująca biała bluzka kokarda szpilki",
+  "prompt": "Outfit: black high-waist pencil micro mini skirt, sheer white chiffon blouse with bow and black patent pumps, adult office costume. Ghost mannequin product photo: the garments are shown on an invisible mannequin (hollow, no body), clothing only, absolutely no person, no skin, no face, no hands, no legs, no body parts. Plain light grey seamless studio background, soft even lighting, centered, entire outfit visible with space around it, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-035",
+  "nameEn": "Devil costume",
+  "namePl": "Kostium diablicy",
+  "kw": "red devil costume horns corset",
+  "kwPl": "czerwony diablica kostium rogi gorset",
+  "prompt": "Outfit: red satin devil costume corset dress with horns headband, tail and red gloves. Ghost mannequin product photo: the garments are shown on an invisible mannequin (hollow, no body), clothing only, absolutely no person, no skin, no face, no hands, no legs, no body parts. Plain light grey seamless studio background, soft even lighting, centered, entire outfit visible with space around it, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-036",
+  "nameEn": "Angel costume",
+  "namePl": "Kostium aniołka",
+  "kw": "white angel costume wings corset",
+  "kwPl": "biały aniołek kostium skrzydła gorset",
+  "prompt": "Outfit: white satin corset mini dress with small feather angel wings and halo headband. Ghost mannequin product photo: the garments are shown on an invisible mannequin (hollow, no body), clothing only, absolutely no person, no skin, no face, no hands, no legs, no body parts. Plain light grey seamless studio background, soft even lighting, centered, entire outfit visible with space around it, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-037",
+  "nameEn": "Chain mesh top and skirt",
+  "namePl": "Top i spódnica z łańcuszków",
+  "kw": "silver chain mail top skirt metallic",
+  "kwPl": "srebrny łańcuszki top spódnica metaliczny",
+  "prompt": "Outfit: silver metal chain mesh halter top and matching chain mini skirt. Ghost mannequin product photo: the garments are shown on an invisible mannequin (hollow, no body), clothing only, absolutely no person, no skin, no face, no hands, no legs, no body parts. Plain light grey seamless studio background, soft even lighting, centered, entire outfit visible with space around it, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-038",
+  "nameEn": "Black PVC catsuit with cutouts",
+  "namePl": "Czarny kombinezon PVC z wycięciami",
+  "kw": "black pvc catsuit cutouts",
+  "kwPl": "czarny pvc kombinezon wycięcia",
+  "prompt": "Outfit: glossy black PVC catsuit with geometric cutouts at the waist and chest. Ghost mannequin product photo: the garments are shown on an invisible mannequin (hollow, no body), clothing only, absolutely no person, no skin, no face, no hands, no legs, no body parts. Plain light grey seamless studio background, soft even lighting, centered, entire outfit visible with space around it, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-039",
+  "nameEn": "Pink latex mini dress",
+  "namePl": "Różowa lateksowa sukienka mini",
+  "kw": "pink latex mini dress puff sleeves",
+  "kwPl": "różowy lateks sukienka mini bufki",
+  "prompt": "Outfit: baby pink latex mini dress with short puff sleeves and square neckline. Ghost mannequin product photo: the garments are shown on an invisible mannequin (hollow, no body), clothing only, absolutely no person, no skin, no face, no hands, no legs, no body parts. Plain light grey seamless studio background, soft even lighting, centered, entire outfit visible with space around it, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-040",
+  "nameEn": "Garter belt and heels",
+  "namePl": "Pas do pończoch i szpilki",
+  "kw": "black garter belt stockings stiletto heels",
+  "kwPl": "czarny pas pończochy szpilki",
+  "prompt": "Flat lay product photo from above: a black satin garter belt, a pair of black seamed stockings and a pair of black patent stiletto heels, arranged neatly, laid flat and neatly spread on a light grey surface. Clothing only, no person, no mannequin, no body shape, no skin. Plain light grey background, soft even lighting, centered, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-041",
+  "nameEn": "Lace-up leather pants and bra",
+  "namePl": "Sznurowane skórzane spodnie i stanik",
+  "kw": "black leather lace-up capri pants bra top",
+  "kwPl": "czarny skóra sznurowane spodnie rybaczki stanik",
+  "prompt": "Outfit: black leather knee-length pants with side lace-up panels and a black leather bra top. Ghost mannequin product photo: the garments are shown on an invisible mannequin (hollow, no body), clothing only, absolutely no person, no skin, no face, no hands, no legs, no body parts. Plain light grey seamless studio background, soft even lighting, centered, entire outfit visible with space around it, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-042",
+  "nameEn": "Red mesh club dress",
+  "namePl": "Czerwona siateczkowa sukienka klubowa",
+  "kw": "red mesh dress ruched club",
+  "kwPl": "czerwony siatka sukienka klubowa marszczona",
+  "prompt": "Outfit: red sheer ruched mesh mini dress with lined bodice and long sleeves. Ghost mannequin product photo: the garments are shown on an invisible mannequin (hollow, no body), clothing only, absolutely no person, no skin, no face, no hands, no legs, no body parts. Plain light grey seamless studio background, soft even lighting, centered, entire outfit visible with space around it, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-043",
+  "nameEn": "Lavender corset set",
+  "namePl": "Lawendowy gorset z dodatkami",
+  "kw": "lavender corset garter stockings",
+  "kwPl": "lawendowy gorset pas pończochy",
+  "prompt": "Outfit: lavender satin corset with lace overlay, matching garters and pale sheer stockings. Ghost mannequin product photo: the garments are shown on an invisible mannequin (hollow, no body), clothing only, absolutely no person, no skin, no face, no hands, no legs, no body parts. Plain light grey seamless studio background, soft even lighting, centered, entire outfit visible with space around it, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-044",
+  "nameEn": "Black bodysuit with straps",
+  "namePl": "Czarne body z paskami",
+  "kw": "black strappy bodysuit cage",
+  "kwPl": "czarny body paski klatka",
+  "prompt": "Outfit: black bodysuit with cage-style strappy neckline and open back straps. Ghost mannequin product photo: the garments are shown on an invisible mannequin (hollow, no body), clothing only, absolutely no person, no skin, no face, no hands, no legs, no body parts. Plain light grey seamless studio background, soft even lighting, centered, entire outfit visible with space around it, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-045",
+  "nameEn": "Cowgirl costume",
+  "namePl": "Kostium kowbojki",
+  "kw": "denim micro shorts crop top cowboy hat boots",
+  "kwPl": "dżins szorty mikro crop top kapelusz kowbojski kozaki",
+  "prompt": "Outfit: denim micro shorts, red plaid tied crop top, white cowboy hat and white cowboy boots. Ghost mannequin product photo: the garments are shown on an invisible mannequin (hollow, no body), clothing only, absolutely no person, no skin, no face, no hands, no legs, no body parts. Plain light grey seamless studio background, soft even lighting, centered, entire outfit visible with space around it, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-046",
+  "nameEn": "Stewardess costume",
+  "namePl": "Kostium stewardessy",
+  "kw": "blue stewardess costume mini dress hat",
+  "kwPl": "niebieski stewardessa kostium sukienka mini kapelusz",
+  "prompt": "Outfit: fitted sky blue flight attendant-style mini dress costume with scarf, small hat and white gloves. Ghost mannequin product photo: the garments are shown on an invisible mannequin (hollow, no body), clothing only, absolutely no person, no skin, no face, no hands, no legs, no body parts. Plain light grey seamless studio background, soft even lighting, centered, entire outfit visible with space around it, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-047",
+  "nameEn": "Feather and sequin showgirl set",
+  "namePl": "Strój showgirl z piórami i cekinami",
+  "kw": "gold sequin bodysuit feathers showgirl",
+  "kwPl": "złoty cekiny body pióra showgirl",
+  "prompt": "Outfit: gold sequin showgirl bodysuit with feather headpiece and feather tail accents. Ghost mannequin product photo: the garments are shown on an invisible mannequin (hollow, no body), clothing only, absolutely no person, no skin, no face, no hands, no legs, no body parts. Plain light grey seamless studio background, soft even lighting, centered, entire outfit visible with space around it, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-048",
+  "nameEn": "Black lace kimono set",
+  "namePl": "Czarne kimono z koronki",
+  "kw": "black lace kimono robe bodysuit",
+  "kwPl": "czarny koronka kimono szlafrok body",
+  "prompt": "Fashion catalog product photo of a short black floral lace kimono-style robe with wide sleeves, worn open over a matching black lace bodysuit, displayed on an invisible ghost mannequin, garments only, no person. Plain light grey studio background, soft lighting, centered, portrait composition, photorealistic, no text, no logo."
+ },
+ {
+  "id": "CUST-049",
+  "nameEn": "Wet-look leggings and bandeau",
+  "namePl": "Legginsy wet-look i bandeau",
+  "kw": "wet look leggings bandeau top silver",
+  "kwPl": "wet look legginsy bandeau top srebrny",
+  "prompt": "Outfit: silver wet-look high-waist leggings with a matching silver bandeau top. Ghost mannequin product photo: the garments are shown on an invisible mannequin (hollow, no body), clothing only, absolutely no person, no skin, no face, no hands, no legs, no body parts. Plain light grey seamless studio background, soft even lighting, centered, entire outfit visible with space around it, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ },
+ {
+  "id": "CUST-050",
+  "nameEn": "White PVC nurse dress",
+  "namePl": "Biała sukienka pielęgniarki z PVC",
+  "kw": "white pvc nurse dress red cross",
+  "kwPl": "biały pvc pielęgniarka sukienka czerwony krzyż",
+  "prompt": "Outfit: glossy white PVC zip-front nurse costume mini dress with red cross and white thigh-high vinyl boots. Ghost mannequin product photo: the garments are shown on an invisible mannequin (hollow, no body), clothing only, absolutely no person, no skin, no face, no hands, no legs, no body parts. Plain light grey seamless studio background, soft even lighting, centered, entire outfit visible with space around it, portrait composition, photorealistic e-commerce catalog photo, sharp fabric detail, no text, no logo, no watermark."
+ }
+]

@@ -23,6 +23,7 @@ object ImageSaver {
         withContext(Dispatchers.IO) {
             runCatching {
                 val bytes = when {
+                    source.startsWith("file:///android_asset/") -> context.assets.open(source.removePrefix("file:///android_asset/")).use { it.readBytes() }
                     source.startsWith("http://") || source.startsWith("https://") -> download(source)
                     else -> FileInputStream(File(source)).use { it.readBytes() }
                 }

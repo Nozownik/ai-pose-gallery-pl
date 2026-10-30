@@ -20,13 +20,22 @@ import kotlinx.coroutines.withContext
 data class Costume(
     val id: String,
     val cat: String,
-    val kw: String
+    val kw: String,
+    /** Own offline items (category "custom") only: */
+    val nameEn: String? = null,
+    val namePl: String? = null,
+    val kwPl: String? = null,
+    val prompt: String? = null
 ) {
-    fun thumbUrl(): String = "${CDN}thumbs/$id.webp"
-    fun imageUrl(): String = "${CDN}img/$id.webp"
-    fun originalUrl(): String = "${CDN}png/$id.png"
+    val isCustom: Boolean get() = cat == CUSTOM
+
+    fun thumbUrl(): String = if (isCustom) "${ASSET}custom/thumbs/$id.webp" else "${CDN}thumbs/$id.webp"
+    fun imageUrl(): String = if (isCustom) "${ASSET}custom/img/$id.webp" else "${CDN}img/$id.webp"
+    fun originalUrl(): String = if (isCustom) imageUrl() else "${CDN}png/$id.png"
 
     fun tokens(): List<String> = kw.split(' ').filter { it.isNotBlank() }
+    fun tokensPl(): List<String> = kwPl.orEmpty().split(' ').filter { it.isNotBlank() }
+    fun searchHay(): String = listOf(id, kw, kwPl.orEmpty(), nameEn.orEmpty(), namePl.orEmpty()).joinToString(" ").lowercase()
 
     /** English outfit description to paste into a prompt. */
     fun promptText(): String = "outfit: $kw"
@@ -34,9 +43,11 @@ data class Costume(
     companion object {
         const val CDN = "https://ai-costume-gallery.pages.dev/"
         const val SITE = CDN
+        const val ASSET = "file:///android_asset/"
+        const val CUSTOM = "custom"
 
         /** Display order (same as the source site). */
-        val CATEGORY_ORDER = listOf("spring", "summer", "autumn", "winter", "lingerie", "party", "swimwear", "sexy")
+        val CATEGORY_ORDER = listOf(CUSTOM, "spring", "summer", "autumn", "winter", "lingerie", "party", "swimwear", "sexy")
     }
 }
 
@@ -48,10 +59,16 @@ class CostumeRepository(private val context: Context) {
     val favorites: StateFlow<Set<String>> = _favorites.asStateFlow()
 
     suspend fun load(): List<Costume> = withContext(Dispatchers.IO) {
-        context.assets.open("data/costumes.json").bufferedReader().use { r ->
-            val type = object : TypeToken<List<Costume>>() {}.type
+        val type = object : TypeToken<List<Costume>>() {}.type
+        val custom: List<Costume> = runCatching {
+            context.assets.open("custom/custom.json").bufferedReader().use { r ->
+                gson.fromJson<List<Costume>>(r, type).map { it.copy(cat = Costume.CUSTOM) }
+            }
+        }.getOrDefault(emptyList())
+        val online: List<Costume> = context.assets.open("data/costumes.json").bufferedReader().use { r ->
             gson.fromJson<List<Costume>>(r, type)
         }
+        custom + online
     }
 
     fun toggleFavorite(id: String) {

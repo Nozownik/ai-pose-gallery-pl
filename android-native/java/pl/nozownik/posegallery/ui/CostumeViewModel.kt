@@ -74,7 +74,8 @@ class CostumeViewModel(app: Application) : AndroidViewModel(app) {
         val e = CostumeSearch.toEnglish(w)
         if (c.id.lowercase().contains(w)) return true
         if (c.cat.startsWith(e) || CostumeSearch.categoryLabelMatches(c.cat, w)) return true
-        return c.tokens().any { it.startsWith(e) }
+        if (c.tokens().any { it.startsWith(e) }) return true
+        return c.isCustom && c.searchHay().contains(w)
     }
 
     fun setCategory(cat: String) {
@@ -112,7 +113,8 @@ class CostumeViewModel(app: Application) : AndroidViewModel(app) {
     /** Saves one original PNG (single image, on explicit user action). */
     fun saveImage(c: Costume) {
         viewModelScope.launch {
-            val ok = ImageSaver.savePoseImage(getApplication(), c.originalUrl(), c.id, "image/png", "png")
+            val ok = if (c.isCustom) ImageSaver.savePoseImage(getApplication(), c.originalUrl(), c.id, "image/webp", "webp")
+            else ImageSaver.savePoseImage(getApplication(), c.originalUrl(), c.id, "image/png", "png")
             _events.emit(if (ok) "saved_ok" else "saved_fail")
         }
     }

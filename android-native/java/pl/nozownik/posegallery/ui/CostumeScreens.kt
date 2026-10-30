@@ -100,7 +100,12 @@ data class CS(
     val copyPrompt: String,
     val terms: String,
     val swipeHint: String,
-    val cats: Map<String, String>
+    val saveCustom: String,
+    val genPrompt: String,
+    val customTerms: String,
+    val offlineBadge: String,
+    val cats: Map<String, String>,
+    val isPl: Boolean
 )
 
 fun costumeStrings(lang: AppLanguage): CS = if (lang == AppLanguage.EN) CS(
@@ -127,10 +132,15 @@ fun costumeStrings(lang: AppLanguage): CS = if (lang == AppLanguage.EN) CS(
     copyPrompt = "Copy prompt",
     terms = "Garment-only AI images by ギア (@giaaibusi). Free to use as a reference, one image at a time. Redistribution, resale and bulk downloading of the images are prohibited. Images load from the original site.",
     swipeHint = "Swipe left/right: next / previous outfit",
+    saveCustom = "Save image (WEBP)",
+    genPrompt = "Generation prompt (EN)",
+    customTerms = "Custom: own AI-generated garment images (no people) made for Galeria poz AI. Bundled offline in the app.",
+    offlineBadge = "OFFLINE",
     cats = mapOf(
-        "spring" to "Spring", "summer" to "Summer", "autumn" to "Autumn", "winter" to "Winter",
+        "custom" to "Custom", "spring" to "Spring", "summer" to "Summer", "autumn" to "Autumn", "winter" to "Winter",
         "lingerie" to "Lingerie", "party" to "Party", "swimwear" to "Swimwear", "sexy" to "Sexy"
-    )
+    ),
+    isPl = false
 ) else CS(
     tab = "Ubrania",
     title = "Ubrania",
@@ -155,10 +165,15 @@ fun costumeStrings(lang: AppLanguage): CS = if (lang == AppLanguage.EN) CS(
     copyPrompt = "Kopiuj prompt",
     terms = "Obrazy samych ubrań (bez ludzi), wygenerowane AI przez ギア (@giaaibusi). Darmowe jako referencja, pojedynczo. Zakaz redystrybucji, odsprzedaży i masowego pobierania obrazów. Obrazy ładują się z oryginalnej strony.",
     swipeHint = "Przesuń w lewo/prawo: następny / poprzedni strój",
+    saveCustom = "Zapisz obraz (WEBP)",
+    genPrompt = "Prompt generowania (EN)",
+    customTerms = "Custom: własne obrazy ubrań wygenerowane AI (bez ludzi) dla Galerii poz AI. Wbudowane offline w aplikację.",
+    offlineBadge = "OFFLINE",
     cats = mapOf(
-        "spring" to "Wiosna", "summer" to "Lato", "autumn" to "Jesień", "winter" to "Zima",
+        "custom" to "Custom", "spring" to "Wiosna", "summer" to "Lato", "autumn" to "Jesień", "winter" to "Zima",
         "lingerie" to "Bielizna", "party" to "Impreza", "swimwear" to "Stroje kąpielowe", "sexy" to "Seksowne"
-    )
+    ),
+    isPl = true
 )
 
 @Composable
@@ -259,6 +274,7 @@ fun CostumeGalleryScreen(
                     CostumeCard(
                         item = item,
                         catLabel = cs.cats[item.cat] ?: item.cat,
+                        isPl = cs.isPl,
                         favorited = item.id in state.favorites,
                         onClick = { onOpen(item) },
                         onToggleFav = { vm.toggleFavorite(item.id) }
@@ -273,6 +289,7 @@ fun CostumeGalleryScreen(
 private fun CostumeCard(
     item: Costume,
     catLabel: String,
+    isPl: Boolean,
     favorited: Boolean,
     onClick: () -> Unit,
     onToggleFav: () -> Unit
@@ -313,7 +330,7 @@ private fun CostumeCard(
         }
         Column(Modifier.padding(10.dp)) {
             Text(
-                item.tokens().joinToString(" · "),
+                if (item.isCustom) customName(item, isPl, catLabel) else item.tokens().joinToString(" · "),
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
                 color = c.textMain,
@@ -349,7 +366,10 @@ fun CostumeDetailScreen(
             IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, null, tint = c.textMain) }
             Column(Modifier.weight(1f)) {
                 Text(item.id, color = c.accent, fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                Text(cs.cats[item.cat] ?: item.cat, color = c.textMain, fontWeight = FontWeight.SemiBold, maxLines = 1)
+                Text(
+                    if (item.isCustom) customName(item, cs.isPl, cs.title) else (cs.cats[item.cat] ?: item.cat),
+                    color = c.textMain, fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis
+                )
             }
             IconButton(onClick = { vm.saveImage(item) }) { Icon(Icons.Default.Download, cs.saveOriginal, tint = c.textMuted) }
             IconButton(onClick = { vm.toggleFavorite(item.id) }) {
@@ -405,6 +425,8 @@ fun CostumeDetailScreen(
             CMetaRow(cs.category, cs.cats[item.cat] ?: item.cat)
             CMetaRow(cs.id, item.id)
             CMetaRow(cs.keywords, item.tokens().joinToString(", "))
+            if (item.isCustom && !item.kwPl.isNullOrBlank()) CMetaRow("PL", item.tokensPl().joinToString(", "))
+            if (item.isCustom) CMetaRow("", cs.offlineBadge)
             Spacer(Modifier.height(12.dp))
 
             Button(
@@ -429,23 +451,28 @@ fun CostumeDetailScreen(
             OutlinedButton(onClick = { vm.saveImage(item) }, modifier = Modifier.fillMaxWidth().height(46.dp), shape = RoundedCornerShape(14.dp)) {
                 Icon(Icons.Default.Download, null, tint = c.accent)
                 Spacer(Modifier.size(8.dp))
-                Text(cs.saveOriginal, color = c.accent, fontWeight = FontWeight.SemiBold)
+                Text(if (item.isCustom) cs.saveCustom else cs.saveOriginal, color = c.accent, fontWeight = FontWeight.SemiBold)
             }
-            Spacer(Modifier.height(6.dp))
-            OutlinedButton(
-                onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(Costume.SITE))) },
-                modifier = Modifier.fillMaxWidth().height(46.dp),
-                shape = RoundedCornerShape(14.dp)
-            ) {
-                Icon(Icons.Default.Link, null, tint = c.accent)
-                Spacer(Modifier.size(8.dp))
-                Text(cs.openSite, color = c.accent, fontWeight = FontWeight.SemiBold)
+            if (!item.isCustom) {
+                Spacer(Modifier.height(6.dp))
+                OutlinedButton(
+                    onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(Costume.SITE))) },
+                    modifier = Modifier.fillMaxWidth().height(46.dp),
+                    shape = RoundedCornerShape(14.dp)
+                ) {
+                    Icon(Icons.Default.Link, null, tint = c.accent)
+                    Spacer(Modifier.size(8.dp))
+                    Text(cs.openSite, color = c.accent, fontWeight = FontWeight.SemiBold)
+                }
             }
 
             Spacer(Modifier.height(16.dp))
             Text(cs.prompts, color = c.textMain, fontWeight = FontWeight.Bold, fontSize = 14.sp)
             Text(cs.promptsHint, color = c.textMuted, fontSize = 11.sp)
             Spacer(Modifier.height(6.dp))
+            if (item.isCustom && !item.prompt.isNullOrBlank()) {
+                CPromptCard(cs.genPrompt, item.prompt, cs.copyPrompt) { vm.copyText(it) }
+            }
             CPromptCard("Nano Banana (Gemini)", CostumePrompts.nanoBanana(item), cs.copyPrompt) { vm.copyText(it) }
             CPromptCard("ChatGPT", CostumePrompts.chatGpt(item), cs.copyPrompt) { vm.copyText(it) }
             CPromptCard("Grok Imagine", CostumePrompts.grokImagine(item), cs.copyPrompt) { vm.copyText(it) }
@@ -453,7 +480,7 @@ fun CostumeDetailScreen(
 
             Spacer(Modifier.height(14.dp))
             Text(
-                cs.terms,
+                if (item.isCustom) cs.customTerms else cs.terms,
                 color = c.textMuted,
                 fontSize = 10.sp,
                 lineHeight = 14.sp,
@@ -510,3 +537,6 @@ private fun costumeFieldColors(c: PoseColors) = OutlinedTextFieldDefaults.colors
     focusedPlaceholderColor = c.textMuted,
     unfocusedPlaceholderColor = c.textMuted
 )
+
+private fun customName(item: Costume, pl: Boolean, fallback: String): String =
+    (if (pl) item.namePl else item.nameEn) ?: item.nameEn ?: item.namePl ?: fallback

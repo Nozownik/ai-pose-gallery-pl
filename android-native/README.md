@@ -3,6 +3,9 @@
 Package: `pl.nozownik.posegallery`  
 Buildable project: sibling `ai-pose-gallery-pl-app`
 
+## v2.4.0
+Ubrania: new first category **Custom** — 50 own AI-generated garment-only images (ghost mannequin / flat lay, no people), sexy/club/lingerie/costume theme, bundled offline in `assets/custom/` (img 768×1152 webp + 300×450 thumbs + `custom.json` with PL/EN names, keywords and the English generation prompt). Detail shows the generation prompt plus the usual prompt variants; save writes the WEBP; "open source site" hidden for Custom. Search matches PL/EN names and keywords. Favourites work as for other outfits.
+
 ## v2.3.0
 New bottom tab **Ubrania / Outfits**: 1407 garment-only outfit references from COSTUME-DB-01 衣装集 by ギア (@giaaibusi), https://ai-costume-gallery.pages.dev/ .
 8 categories (Wiosna, Lato, Jesień, Zima, Bielizna, Impreza, Stroje kąpielowe, Seksowne) + ♥ Ulubione, search by ID / EN keyword / common Polish words (czarny, sukienka…).
@@ -27,4 +30,4 @@ Keeps 2.1.1: larger thumbs, copy image bitmap, style prompts only on custom crea
 
 Skipped: #9 seed/LoRA
 
-versionName 2.3.0 / versionCode 7
+versionName 2.4.0 / versionCode 8

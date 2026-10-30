@@ -20,6 +20,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 object ImageClipboard {
+    private const val ASSET_PREFIX = "file:///android_asset/"
     /**
      * Puts the actual image on the system clipboard (not a URL string),
      * so keyboards / chat apps can paste it.
@@ -83,6 +84,7 @@ object ImageClipboard {
         }.getOrNull()
 
     private fun loadBytes(context: Context, source: String): ByteArray = when {
+        source.startsWith(ASSET_PREFIX) -> context.assets.open(source.removePrefix(ASSET_PREFIX)).use { it.readBytes() }
         source.startsWith("http://") || source.startsWith("https://") -> download(source)
         source.startsWith("content://") || source.startsWith("file://") ->
             context.contentResolver.openInputStream(Uri.parse(source))!!.use { it.readBytes() }

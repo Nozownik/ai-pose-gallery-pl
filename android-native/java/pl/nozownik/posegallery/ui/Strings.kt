@@ -204,7 +204,7 @@ fun strings(lang: AppLanguage): S = when (lang) {
         aboutImages = "Obrazy / dane: ギア (@giaaibusi)",
         aboutLicense = "Kod: MIT · obrazy poza MIT (prawa autora)",
         aboutCostumes = "Źródło ubrań: COSTUME-DB-01 衣装集 (ギア @giaaibusi)",
-        aboutCostumesNote = "Ubrania: tylko metadane w APK, obrazy ładowane z oryginalnej strony. Użytek jako referencja OK; zakaz redystrybucji i masowego pobierania obrazów."
+        aboutCostumesNote = "Ubrania: tylko metadane w APK, obrazy ładowane z oryginalnej strony. Użytek jako referencja OK; zakaz redystrybucji i masowego pobierania obrazów. Kategoria Custom: 50 własnych obrazów AI (Nozownik), offline."
     )
     AppLanguage.EN -> S(
         appTitle = "AI Pose Gallery",
@@ -305,6 +305,6 @@ fun strings(lang: AppLanguage): S = when (lang) {
         aboutImages = "Images / data: ギア (@giaaibusi)",
         aboutLicense = "Code: MIT · images not under MIT (author rights)",
         aboutCostumes = "Outfit source: COSTUME-DB-01 衣装集 (ギア @giaaibusi)",
-        aboutCostumesNote = "Outfits: only metadata in the APK, images load from the original site. Reference use OK; no redistribution or bulk downloading of images."
+        aboutCostumesNote = "Outfits: only metadata in the APK, images load from the original site. Reference use OK; no redistribution or bulk downloading of images. Custom category: 50 own AI images (Nozownik), offline."
     )
 }
